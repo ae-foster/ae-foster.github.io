@@ -218,9 +218,9 @@
   margin-left: 0;
   list-style: none;
   display: table;
+  border-spacing: 0px 15px;
 
   > li {
-    margin-bottom: $spacing-unit;
     display: table-row;
   }
 }
@@ -232,7 +232,7 @@
 
 .post-link {
   display: block;
-  @include relative-font-size(1.5);
+  @include relative-font-size(1.25);
 }
 
 
@@ -288,7 +288,7 @@
     object-fit: contain;
     overflow: hidden;
     float: left;
-    padding-right: 25px
+    padding-right: 25px;
 }
 
 .summary{

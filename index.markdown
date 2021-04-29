@@ -25,3 +25,11 @@ Within the OxCSML group, I have been fortunate enough to be introduced to a wide
 We run a reading group on the role of symmetry and equivariance in deep learning.
 We have also read the latest research in reinforcement learning, deep generative models and metalearning, among other topics.
 
+## Future plans
+I am currently searching for jobs!
+I plan to use probabilistic machine learning in my job and to continue my work on Bayesian Experimental Design (BED) in some form. This is a very exciting time for the field as we slowly solve the computational issues that have held back the widespread adoption of automated optimal design.
+As well as continuing research on core topics in this field, like new algorithms and estimators to design experiments, there are a number of areas where experimental design might be impactful, and where we could gain new ideas about how to improve experimental design.
+One key area is interacting with humans via natural language. There has been limited work to date combining BED with probabilistic language models.
+The connection between BED and reinforcement learning is a deep one that should be further studied. A wide range of RL algorithms could be applicable, with modification, to experimental design. For model-based RL, ideas from experimental design could help estimate information-theoretic quantities used to encourage exploration.
+There are also important questions about implicit models and simulator models to be answered.
+I am interested in applications of BED to real-world experiments in areas such as natural language, education, political science and biotech, to name a few. 

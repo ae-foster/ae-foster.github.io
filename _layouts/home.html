@@ -12,7 +12,7 @@ layout: default
   {{ content }}
 
   {%- if site.posts.size > 0 -%}
-    <h2 class="post-list-heading">Recent work</h2>
+    <h2>Recent work</h2>
     <ul class="post-list">
       {%- for post in site.posts limit:15 -%}
       <li>
