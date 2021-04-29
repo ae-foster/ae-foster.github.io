@@ -1,0 +1,49 @@
+---
+layout: default
+---
+
+<div class="home">
+  {%- if page.title -%}
+    <h1 class="page-heading">{{ page.title }}</h1>
+  {%- endif -%}
+
+  {{ content }}
+
+  {%- assign these_posts = site.posts | where:"tag",page.tag -%}
+  {%- if these_posts.size > 0 -%}
+    <ul class="post-list">
+      {%- for post in these_posts -%}
+      <li>
+        {%- if post.thumbnail -%}
+        <img class="thumbnail" src="{{ post.thumbnail | relative_url }}" alt="Thumbnail">
+        {%- endif -%}
+        {%- assign date_format = "%-d %B %Y" -%}
+        <span class="post-meta">{{ post.date | date: date_format }}</span>
+        <h6>
+          {%- if post.external_url -%}
+          <a class="post-link" rel="canonical" href="{{ post.external_url }}">
+            {{ post.title | escape }}
+          </a>
+          {%- else -%}
+          <a class="post-link" rel="canonical" href="{{ post.url | relative }}">
+            {{ post.title | escape }}
+          </a>
+          {%- endif -%}
+        </h6>
+        {%- if post.authors -%}
+        <p>
+        {{ post.authors }}. &nbsp;
+        {%- if post.published -%}
+        <em>{{ post.published }}.</em>
+        </p>
+        {%- else -%}
+        </p>
+        {%- endif -%}
+        {%- endif -%}
+        <div class="summary">{{ post.content }}</div>
+      </li>
+      {%- endfor -%}
+      </ul>
+  {%- endif -%}
+
+</div>
