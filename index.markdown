@@ -29,3 +29,4 @@ We have also read the latest research in reinforcement learning, deep generative
 I am currently searching for jobs!
 I am on the look out for opportunities to use machine learning, make a contribution, learn, create, and share what I already know.
 Having spent some time working on Bayesian Experimental Design, I know there are a number of exciting directions that research in the field could go&mdash;natural language and language models, the connection to reinforcement learning, implicit models, and improving our theoretical understanding&mdash;as well as potential applications in science, education, politics and biotech to name a few. 
+I am also keen to use deep learning and probabilistic modelling more broadly to tackle interesting problems. 
