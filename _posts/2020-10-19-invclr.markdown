@@ -6,7 +6,7 @@ categories: papers
 external_url: https://arxiv.org/abs/2010.09515
 external_site: arxiv.org
 authors: Adam Foster, Rattana Pukdee, Tom Rainforth
-published: ICLR 2021 (to appear)
+published: ICLR 2021
 thumbnail: assets/invclr.png
 tag: paper
 ---
