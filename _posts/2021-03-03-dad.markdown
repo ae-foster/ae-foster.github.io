@@ -6,7 +6,7 @@ categories: papers
 external_url: https://arxiv.org/abs/2103.02438
 external_site: arxiv.org
 authors: Adam Foster, Desi R. Ivanova, Ilyas Malik, Tom Rainforth
-published: Preprint
+published: ICML 2021 (long presentation)
 thumbnail: assets/dad.png
 tag: paper
 ---
