@@ -14,4 +14,5 @@ order: 10
  - [Eli Bingham](https://scholar.google.com/citations?user=0uUoiCIAAAAJ&hl=en) (Broad Institute)
  - [Emile Mathieu](https://emilemathieu.fr/) (Oxford)
  - [Matthew O'Meara](https://medicine.umich.edu/dept/dcmb/matthew-omeara-phd) (Michigan)
+ - [Aaron Sim](https://scholar.google.com/citations?user=AN1GOvsAAAAJ&hl=en&oi=ao) (BenevolentAI)  
  - [Desi R. Ivanova](http://csml.stats.ox.ac.uk/people/ivanova/) (Oxford)
