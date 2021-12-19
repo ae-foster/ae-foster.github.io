@@ -6,7 +6,7 @@ categories: papers
 external_url: https://arxiv.org/abs/2106.10052
 external_site: arxiv.org
 authors: Emile Mathieu, Adam Foster, Yee Whye Teh
-published: NeurIPS 2021 (to appear)
+published: NeurIPS 2021 
 thumbnail: assets/cresp_r2n2.png
 tag: paper
 ---

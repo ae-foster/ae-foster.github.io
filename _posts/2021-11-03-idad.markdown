@@ -6,7 +6,7 @@ categories: papers
 external_url: https://arxiv.org/abs/2111.02329
 external_site: arxiv.org
 authors: Desi R. Ivanova, Adam Foster, Steven Kleinegesse, Michael U. Gutmann, Tom Rainforth
-published: NeurIPS 2021 (to appear)
+published: NeurIPS 2021
 thumbnail: assets/idad.png
 tag: paper
 ---
