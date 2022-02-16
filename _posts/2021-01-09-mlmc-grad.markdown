@@ -6,7 +6,7 @@ categories: papers
 external_url: https://arxiv.org/abs/2005.08414
 external_site: arxiv.org
 authors: Takashi Goda, Tomohiko Hironaka, Wataru Kitade, Adam Foster
-published: Preprint
+published: SIAM Journal on Scientific Computing
 thumbnail: assets/mlmc-formula.png
 tag: paper
 ---
