@@ -1,0 +1,38 @@
+---
+layout: post
+title:  "DPhil Thesis: Variational, Monte Carlo and Policy-Based Approaches to Bayesian Experimental Design"
+date:   2022-02-04
+categories: papers
+docurl: assets/thesis.pdf
+authors: Adam Foster
+published: University of Oxford
+thumbnail: assets/thesis-thumbnail.png
+tag: paper
+---
+
+Experimentation is key to learning about our world, but careful design of experiments is critical to ensure
+resources are used efficiently to conduct discerning investigations. Bayesian experimental design (BED)
+is an elegant framework that provides a mathematical definition of the expected information gain (EIG)
+of running a certain experiment. Finding the design with the maximal EIG will, in expectation, give
+experimental outcomes that are most informative about the underlying phenomenon.
+BED promises to launch a revolution in science and machine learning, but it is only beginning to realise
+its potential due to numerous unsolved computational problems. One fundamental computational issue
+is the estimation of EIG, where a naïve approach necessitates nested calculation of Bayesian posteriors.
+Further computational challenges concern the optimisation of the EIG across design space, and the design
+of adaptive experiments that use data that has been already observed to find the optimal design of the
+next experiment.
+In this thesis, we ask whether the machinery of modern machine learning can be brought to bear on
+these computational challenges, demonstrating that significant advances are possible when modern ML
+is combined with a deep understanding of BED. We begin by examining the EIG estimation problem,
+being the first to apply variational inference and inference amortisation to the problem. We then turn to
+optimisation of the EIG over a continuous design space, showing that stochastic gradient methods, which
+have not been widely adopted in BED, combine with simultaneous optimisation of variational parameters
+to great effect. Continuing on this theme, we show that it is possible to obtain unbiased gradients of
+EIG using Multi-level Monte Carlo. For the adaptive design problem, a key limitation of most methods
+is that they require substantial computation at each iteration of the experiment. We ask whether this
+process itself cannot be amortised, ultimately deriving an algorithm that trains a design policy network
+offline to be deployed with lightning-fast design decisions during a live experiment. Finally, we show how
+this policy-driven approach extends to implicit models.
+Together, these contributions move the field of Bayesian experimental design forward significantly in
+terms of what is computationally possible. Our hope is that practitioners will be able to apply these
+ideas to advance human understanding in many scientific disciplines.
