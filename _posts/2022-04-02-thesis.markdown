@@ -1,9 +1,9 @@
 ---
 layout: post
 title:  "DPhil Thesis: Variational, Monte Carlo and Policy-Based Approaches to Bayesian Experimental Design"
-date:   2022-02-04
+date:   2022-04-02
 categories: papers
-docurl: assets/thesis.pdf
+external_url: assets/thesis.pdf
 authors: Adam Foster
 published: University of Oxford
 thumbnail: assets/thesis-thumbnail.png
