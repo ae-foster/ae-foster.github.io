@@ -48,9 +48,9 @@ The simplest bound is the posterior lower bound  (also called the Barber--Agakov
 With the variables we have in this model, the bound would be expressed as
 
 $$
-\begin{equation}
+\begin{aligned}
 \mathbb{E}_{p(m)p(\psi\mid m)p(y\mid m,\psi,\xi)}\left[ \log \frac{p(m\mid y,\xi)}{p(m)} \right] \ge \mathbb{E}_{p(m)p(\psi\mid m)p(y\mid m,\psi,\xi)}\left[ \log \frac{q_\phi(m\mid y)}{p(m)} \right].
-\end{equation}
+\end{aligned}
 $$
 
 The new term $$q_\phi(m\mid y,\xi)$$ is the *amortised approximate posterior* with variational parameters $$\phi$$. 
@@ -67,18 +67,18 @@ How should this classifier be trained?
 In general, our original paper, we proposed training $$q_\phi$$ by gradient descent to maximise the lower bound with respect to $$\phi$$
 
 $$
-\begin{equation}
+\begin{aligned}
 \phi^* = \text{argmax}_\phi \mathbb{E}_{p(m)p(\psi\mid m)p(y\mid m,\psi,\xi)}\left[ \log \frac{q_\phi(m\mid y)}{p(m)} \right]
-\end{equation}
+\end{aligned}
 $$
 
 In model selection, training $$\phi$$ simply means training the parameters of the classifier. 
 Maximising the posterior lower bound is equivalent to simply maximising the expected log likelihood under $$q$$, i.e. 
 
 $$
-\begin{equation}
+\begin{aligned}
 \phi^* = \argmax_\phi \mathbb{E}_{p(m)p(\psi\mid m)p(y\mid m,\psi,\xi)}\left[ \log q_\phi(m\mid y) \right].
-\end{equation}
+\end{aligned}
 $$
 
 This is true because $$p(m)$$ has no dependence on $$\phi$$.
@@ -95,9 +95,9 @@ Suppose we have completed training and reached parameters $$\hat{\phi}$$.
 Then the EIG estimate is
 
 $$
-\begin{equation}
+\begin{aligned}
 \text{EIG}(\xi) \approx \mathbb{E}_{p(m)p(\psi\mid m)p(y\mid m,\psi,\xi)}\left[ \log \frac{q_{\hat{\phi}}(m\mid y)}{p(m)} \right] = \mathbb{E}_{p(m)p(\psi\mid m)p(y\mid m,\psi,\xi)}\left[ \log q_{\hat{\phi}}(m\mid y) \right] + H[p(m)]
-\end{equation}
+\end{aligned}
 $$
 
 and we can estimate the expectation with new, independent batches simulated from the model.
@@ -111,9 +111,9 @@ Both the marginal and the VNMC methods require an explicit likelihood, so they a
 The marginal + likelihood estimator is
 
 $$
-\begin{equation}
+\begin{aligned}
 \text{EIG}(\xi) \approx \mathbb{E}_{p(m)p(\psi\mid m)p(y\mid m,\psi,\xi)}\left[ \log \frac{q_\ell(y\mid m,\xi)}{q_p(y\mid \xi)} \right].
-\end{equation}
+\end{aligned}
 $$
 
 This estimator translates, with some simplification, into the model selection setting. 
@@ -121,17 +121,17 @@ The 'approximate likelihood' $$q_\ell(y\mid m,\xi)$$ in the model selection sett
 For model selection when $$m$$ is discrete, we do not need to separately estimate $$q_p$$ and $$q_\ell$$, we can instead sum over $$m$$ to obtain
 
 $$
-\begin{equation}
+\begin{aligned}
 q_p(y\mid \xi) = \sum_m p(m) q_\ell(y\mid m,\xi).
-\end{equation}
+\end{aligned}
 $$
 
 As shown in Appendix A.4 of [the VBOED paper](https://arxiv.org/abs/1903.05480), the estimator actually becomes a lower bound
 
 $$
-\begin{equation}
+\begin{aligned}
 \text{EIG}(\xi) \ge \mathbb{E}_{p(m)p(\psi\mid m)p(y\mid m,\psi,\xi)}\left[ \log \frac{q_\ell(y\mid m,\xi)}{\sum_{m'} p(m') q_\ell(y\mid m'	,\xi)} \right]
-\end{equation}
+\end{aligned}
 $$
 
 on the EIG in this case, which is not generally the case for the marginal + likelihood method.
@@ -162,9 +162,9 @@ Recall that, for the posterior bound, we are training a classifier to predict $$
 We have
 
 $$
-\begin{equation}
+\begin{aligned}
 \text{EIG}(\xi) \ge \mathbb{E}_{p(m)p(\psi\mid m)p(y\mid m,\psi,\xi)}\left[ \log q_\phi(m\mid y) \right] + H[p(m)]
-\end{equation}
+\end{aligned}
 $$
 
 where $$q_\phi$$ is the classifier.
@@ -174,17 +174,17 @@ Rather than training separate classifiers with different designs $$\xi$$, the st
 To explicitly write down the $$\xi$$ gradient here, let's assume that we do have $$y = g(m,\psi,\xi,\epsilon)$$, so we can write
 
 $$
-\begin{equation}
+\begin{aligned}
 \mathcal{L}(\xi,\phi) = \mathbb{E}_{p(m)p(\psi\mid m)p(\epsilon)}\left[ \log q_\phi(m\mid g(m,\psi,\xi,\epsilon)) \right] + H[p(m)].
-\end{equation}
+\end{aligned}
 $$
 
 In this form, the $$\xi$$ gradient can be simply calculated as
 
 $$
-\begin{equation}
+\begin{aligned}
 \frac{\partial \mathcal{L}}{\partial \xi} = \mathbb{E}_{p(m)p(\psi\mid m)p(\epsilon)}\left[ \left.\frac{\partial \log q_\phi}{\partial y}\right\vert_{m,g(m,\psi,\xi,\epsilon)}\left.\frac{\partial g}{\partial \xi}\right\vert_{m,\psi,\xi,\epsilon} \right].
-\end{equation}
+\end{aligned}
 $$
 
 The beauty of modern auto-diff frameworks, of course, means that we do not even need to calculate this explicitly ourselves.
