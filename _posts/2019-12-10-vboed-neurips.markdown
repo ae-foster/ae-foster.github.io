@@ -11,3 +11,4 @@ tag: talk
 
 This is the spotlight talk that I delivered at NeurIPS 2019 for the paper [Variational Bayesian Optimal Experimental Design](https://arxiv.org/abs/1903.05480) (my talk starts at 14:18).
 It offers a 5 minute overview of Bayesian Experimental Design and variational methods for estimating Expected Information Gain. 
+<!--more-->

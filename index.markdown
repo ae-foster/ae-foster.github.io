@@ -6,7 +6,7 @@ layout: home
 ---
 
 ![My helpful screenshot](/assets/adamfoster.jpg){:class="main-img"}
-I am a researcher at [Microsoft Research Cambridge](https://www.microsoft.com/en-us/research/lab/microsoft-research-cambridge/) where I work on Bayesian experimental design, causality and deep probabilistic modelling.
+I am a senior researcher at [Microsoft Research Cambridge](https://www.microsoft.com/en-us/research/lab/microsoft-research-cambridge/) where I work on Bayesian experimental design, causality and deep probabilistic modelling.
 I did my PhD in Statistical Machine Learning at the University of Oxford, supervised by [Yee Whye Teh](https://www.stats.ox.ac.uk/~teh/index.html) and [Tom Rainforth](https://www.robots.ox.ac.uk/~twgr/) in the [Computational Stats and Machine Learning Group](http://csml.stats.ox.ac.uk/) in the [Department of Statistics](https://www.stats.ox.ac.uk/).
 Before starting my PhD, I studied [mathematics at Cambridge](https://www.maths.cam.ac.uk/) where my Director of Studies was [Julia Gog](http://www.damtp.cam.ac.uk/person/jrg20). 
 

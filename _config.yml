@@ -24,12 +24,17 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
 github_username:  ae-foster
+excerpt_separator: <!--more-->
 
 # Build settings
 plugins:
   - jekyll-feed
-  - jekyll-feed
   - jekyll-seo-tag
+
+kramdown:
+  math_engine: katex
+  math_engine_opts: {"output": "mathml"}
+
 
 # Exclude from processing.
 # The following items will not be processed, by default.

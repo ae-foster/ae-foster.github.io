@@ -10,3 +10,4 @@ tag: code
 ---
 
 I am the primary author of Pyro's support for optimal experimental design. For any model written in Pyro, it is possible to estimate the Expected Information Gain (EIG) for that model for a particular design using a number of estimators such as Nested Monte Carlo, Laplace approximation, Donsker-Varadhan (aka MINE) and LFIRE. We also include the four key estimators that we introduce in the paper [Variational Bayesian Optimal Experimental Design](https://arxiv.org/abs/1903.05480). These are the posterior, marginal, marginal + likelihood and Variational NMC estimators. To get to grips with using these estimators as part of an adaptive experimentation loop, we also provide two tutorials: on [an adaptive psychology experiment to study working memory](https://pyro.ai/examples/working_memory.html) and on [predicting the outcome of a US presidential election with an OED-driven polling strategy](https://pyro.ai/examples/elections.html).   
+<!--more-->

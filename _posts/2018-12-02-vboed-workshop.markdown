@@ -11,3 +11,4 @@ tag: paper
 ---
 
 Bayesian optimal experimental design (OED) is a principled framework for making efficient use of limited experimental resources. Unfortunately, the applicability of OED is hampered by the difficulty of obtaining accurate estimates of the expected information gain (EIG) for different experimental designs. We introduce a class of fast EIG estimators that leverage amortised variational inference and show that they provide substantial empirical gains over previous approaches. We integrate our approach into a deep probabilistic programming framework, thus making OED accessible to practitioners at large.
+<!--more-->

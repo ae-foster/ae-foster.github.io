@@ -10,3 +10,4 @@ tag: code
 ---
 
 This is a full PyTorch implementation of the paper [A Simple Framework for Contrastive Learning of Visual Representations](https://arxiv.org/pdf/2002.05709.pdf). The focus of this repository is to accurately reproduce the results in the paper using PyTorch. We use the original paper and the official [tensorflow repo](https://github.com/google-research/simclr) as our sources.
+<!--more-->

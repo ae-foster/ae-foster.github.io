@@ -36,3 +36,4 @@ this policy-driven approach extends to implicit models.
 Together, these contributions move the field of Bayesian experimental design forward significantly in
 terms of what is computationally possible. Our hope is that practitioners will be able to apply these
 ideas to advance human understanding in many scientific disciplines.
+<!--more-->

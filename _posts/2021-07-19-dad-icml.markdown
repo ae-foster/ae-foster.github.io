@@ -11,3 +11,4 @@ tag: talk
 
 This is the long presentation that I delivered with Desi Ivanova at ICML 2021 for the paper [Deep Adaptive Design: Amortizing Sequential Bayesian Experimental Design](https://arxiv.org/abs/2103.02438).
 It offers a 25 minute introduction to the DAD method of training a design policy for fast, adaptive experimental design.
+<!--more-->

@@ -9,3 +9,4 @@ tag: code
 ---
 
 I contribute to the open-source machine learning library Datasketch. Datasketch implements probabilistic data structures such as MinHash, and Locality Sensitive Hashing for sublinear search across these structures. I contributed support for a Redis storage layer to allow Datasketch to be deployed at scale.
+<!--more-->
