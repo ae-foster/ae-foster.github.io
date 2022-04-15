@@ -153,10 +153,10 @@ It is only a short jump from variational estimation of the EIG to stochastic gra
 The benefit of doing this is that we do not have conduct a grid search, co-ordinate exchange or similar algorithm over the design space.
 What we require instead is a continuous design space and the ability to differentiate observations with respect to designs.
 
-In [our paper on gradient-based experimental design](https://arxiv.org/abs/1911.00294), we focused on explicit likelihood models. But luckily, both the posterior (Barber--Agakov) lower bound and the LF-ACE bound are applicable to the model selection setting. There is just one thing to check, which is that we can compute a derivative $$\partial y/\partial \xi$$.
+In [our paper on gradient-based experimental design](https://arxiv.org/abs/1911.00294), we introduced several EIG lower bounds which can be used for simultaneous optimisation of the design and variational parameter. Of these, both the posterior (Barber--Agakov) lower bound and the LF-ACE bound are applicable to the model selection setting. There is just one thing to check, which is that we can compute a derivative $$\partial y/\partial \xi$$.
 This is usually fine. For example, if $$p(y\mid m,\psi,\xi)$$ takes the form $$y = g(m,\psi,\xi,\epsilon)$$ for a differentiable $$g$$ and an independent noise random variable $$\epsilon$$.
 
-Assuming this is the case, we can train $$\xi$$ by stochastic gradient using either the posterior bound or the simplified LF-ACE bound that was derived in \eqref{eq:model_selection_bound}.
+Assuming this is the case, we can train $$\xi$$ by stochastic gradient using either the posterior bound or the simplified marginal + likelihood bound.
 We focus on the posterior lower bound for simplicity.
 Recall that, for the posterior bound, we are training a classifier to predict $$m$$ from $$y$$.
 We have
@@ -201,7 +201,8 @@ If this sounds dubious, it is worth taking a step back. We are quite simply opti
 We actually have a guarantee that the value of $$\mathcal{L}$$ at our final trained variables $$\hat{\xi},\hat{\phi}$$ is a lower bound on $$\text{EIG}(\hat{\xi})$$, i.e.~the true value of $$\hat{\xi}$$ cannot be worse than the value we estimate for it.
 
 Whilst the method is approximate, because we cannot quantify the discrepancy between $$\mathcal{L}$$ and the true EIG, it is highly scalable to very large design spaces. 
-We also introduced the evaluation method of establishing *lower and upper* bounds on chosen designs. This numerically bounds the discrepancy between the training objective $$\mathcal{L}$$ and the true EIG objective. Sadly, the upper bounds are only valid for explicit likelihood models; they don't work in the model selection case.
+We also introduced the evaluation method of establishing *lower and upper* bounds on chosen designs. This numerically bounds the discrepancy between the training objective $$\mathcal{L}$$ and the true EIG objective. 
+Sadly, the upper bounds are only valid for explicit likelihood models; they don't work in the model selection case.
 
 Finally, all of the above discussion carries over if we were to use the marginal + likelihood loewr bound instead of the posterior bound.
 
