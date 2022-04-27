@@ -5,7 +5,7 @@ date:   2022-04-14
 categories: posts
 authors: Adam Foster
 published: Blog post
-thumbnail: assets/model-selection-thumb.png
+thumbnail: assets/bed_bald_illustration.png
 tag: post
 ---
 
@@ -140,6 +140,8 @@ The expectation of this mutual information estimator is always an upper bound on
 So both the DBALD score and the NMC-RB estimator converge to $$I(\xi)$$ as $$M\to\infty$$, but from opposite directions.
 We suggest NMC-RB as a diagnostic for the parameter $$M$$.
 
+![Upper/lower bounds on MI]({{ site.url }}/assets/bed_bald_illustration.png){:class="model-select-img"}
+
 
 ## BALD estimators for regression
 The connection to PCE may also be helpful when considering regression models.
@@ -154,8 +156,8 @@ That means all the existing facts, such as the estimator being a stochastic lowe
 
 ## Conclusion
 There are many overlaps between BED and BALD---in fact the DBALD score is equivalent to a Rao-Blackwellized PCE estimator.
-This proves that $$\mathbb{E}[I_{\text{DBALD}(\xi)] \le I(\xi)$$.
-We also found a "cousin" of the BALD score that is an *upper* bound on mutual information---it could be useful as a diagnostic.
+This proves that $$\mathbb{E}[I_{\text{DBALD}}(\xi)] \le I(\xi)$$.
+It also reveals a "cousin" of the BALD score that is an *upper* bound on mutual information---it could be useful as a diagnostic.
 	
 
 
