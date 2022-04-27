@@ -63,7 +63,7 @@ We proved the following Prior Contrastive Estimation (PCE) lower bound on $$I(\x
 
 $$
 \begin{aligned}
-I(\xi) \ge \E_{p(\theta_0)p(y\mid \theta_0,\xi)p(\theta_1)\dots p(\theta_L)}\left[ \log \frac{p(y\mid \theta_0,\xi)}{\frac{1}{L+1} \sum_{\ell=0}^L p(y\mid \theta_\ell,\xi)} \right]
+I(\xi) \ge \mathbb{E}_{p(\theta_0)p(y\mid \theta_0,\xi)p(\theta_1)\dots p(\theta_L)}\left[ \log \frac{p(y\mid \theta_0,\xi)}{\frac{1}{L+1} \sum_{\ell=0}^L p(y\mid \theta_\ell,\xi)} \right]
 \end{aligned}
 $$
 
@@ -81,7 +81,6 @@ However, we can also re-use samples more efficiently to give the estimator
 
 $$
 \begin{aligned}
-\label{eq:pce}
 \hat{I}_\text{PCE}(\xi) = \frac{1}{M} \sum_{m=1}^M \log \frac{p(y_m\mid \theta_{m},\xi)}{\frac{1}{M}\sum_{\ell=1}^M p(y_m\mid \theta_{\ell},\xi)  }.
 \end{aligned}
 $$
@@ -107,8 +106,7 @@ We can see this by direct calculation
 $$
 \begin{aligned}
 \hat{I}_\text{PCE-RB}(\xi) &= \frac{1}{M} \sum_{m=1}^M \sum_c p(y=c\mid \theta_m,\xi) \log \frac{p(y=c\mid \theta_{m},\xi)}{\frac{1}{M}\sum_{\ell=1}^M p(y=c\mid \theta_{\ell},\xi)  } \\
-\begin{split}&= \frac{1}{M} \sum_{m=1}^M \sum_c p(y=c\mid \theta_m,\xi) \log p(y=c\mid \theta_{m},\xi) \\
-& \qquad - \frac{1}{M} \sum_{m=1}^M \sum_c p(y=c\mid \theta_m,\xi) \log\left(\frac{1}{M}\sum_{\ell=1}^M p(y=c\mid \theta_{\ell},\xi)  \right) \end{split}\\
+&= \frac{1}{M} \sum_{m=1}^M \sum_c p(y=c\mid \theta_m,\xi) \log p(y=c\mid \theta_{m},\xi)  - \frac{1}{M} \sum_{m=1}^M \sum_c p(y=c\mid \theta_m,\xi) \log\left(\frac{1}{M}\sum_{\ell=1}^M p(y=c\mid \theta_{\ell},\xi)  \right) \\
 &= -\frac{1}{M} \sum_{m=1}^M H[p(y\mid \theta_m,\xi)]  - \frac{1}{M} \sum_{m=1}^M \sum_c p(y=c\mid \theta_m,\xi) \log\left(\frac{1}{M}\sum_{\ell=1}^M p(y=c\mid \theta_{\ell},\xi)  \right)\\
 &= -\frac{1}{M} \sum_{m=1}^M H[p(y\mid \theta_m,\xi)]  - \sum_c \left(\frac{1}{M}  \sum_{m=1}^M  p(y=c\mid \theta_m,\xi) \right) \log\left(\frac{1}{M}\sum_{\ell=1}^M p(y=c\mid \theta_{\ell},\xi)  \right)\\
 &= -\frac{1}{M} \sum_{m=1}^M H[p(y\mid \theta_m,\xi)]  + H\left[\frac{1}{M}  \sum_{m=1}^M  p(y\mid \theta_m,\xi) \right]\\
@@ -156,7 +154,7 @@ That means all the existing facts, such as the estimator being a stochastic lowe
 
 ## Conclusion
 There are many overlaps between BED and BALD---in fact the DBALD score is equivalent to a Rao-Blackwellized PCE estimator.
-This proves that $$\mathbb{E}[DBALD(\xi)] \le I(\xi)$$.
+This proves that $$\mathbb{E}[I_{\text{DBALD}(\xi)] \le I(\xi)$$.
 We also found a "cousin" of the BALD score that is an *upper* bound on mutual information---it could be useful as a diagnostic.
 	
 
