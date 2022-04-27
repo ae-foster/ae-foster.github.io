@@ -14,7 +14,7 @@ A significant touchpoint is the use of the mutual information score as an acquis
 $$I(\xi) = \mathbb{E}_{p(\theta)p(y\mid \theta,\xi)}\left[H[p(\theta)] - H[p(\theta\mid y,\xi)]\right]$$
 which is also called the Expected Information Gain.
 In this equation, $$\theta$$ are the Bayesian model parameters, $$y$$ is the as yet unobserved outcome, and $$\xi$$ is the design to be chosen.
-In [the DBALD paper](https://arxiv.org/abs/1703.02910), Gal et al. introduced a means to estimate the mutual information acquisition function $$I\xi)$$
+In [the DBALD paper](https://arxiv.org/abs/1703.02910), Gal et al. introduced a means to estimate the mutual information acquisition function $$I(\xi)$$
 for active learning when using an [MC Dropout-driven Bayesian neural network](https://arxiv.org/abs/1506.02142).
 In recent work on [variational](https://arxiv.org/abs/1903.05480) and [stochastic gradient](https://arxiv.org/abs/1911.00294) Bayesian experimental design,
 my collaborators and I studied estimators of the mutual information---including one in particular called Prior Constrative Estimation (PCE).
@@ -44,7 +44,7 @@ For example, Houlsby et al. focused on approximations for Gaussian Process model
 The more recent work by [Gal et al.](https://arxiv.org/abs/1703.02910) estimated the BALD score in the context of Bayesian deep learning classifiers.
 In such a model, $$\theta$$ represents the parameters of a classification model, and $$p(y\mid \theta,\xi)$$ is a probability distribution over classes $$y\in\{c_1,\dots,c_k\}$$. 
 Computing $$p(y\mid \theta,\xi)$$ involves a forward pass through the classifier with input $$\xi$$ and parameters $$\theta$$, the network generally ends in a softmax activation to produce a normalised distribution.
-To sample different values of $$\theta$$, they employed [Monte Carlo Dropout]((https://arxiv.org/abs/1506.02142) to approximate a BNN posterior.
+To sample different values of $$\theta$$, they employed [Monte Carlo Dropout](https://arxiv.org/abs/1506.02142) to approximate a BNN posterior.
 Given independent samples $$\theta_1,\dots,\theta_M$$ from $$p(\theta)$$, they proposed the following Deep BALD (DBALD) estimator of $$I(\xi)$$
 
 $$
@@ -186,3 +186,5 @@ Yarin Gal, Riashat Islam, and Zoubin Ghahramani. Deep bayesian active learning w
 Neil Houlsby, Ferenc Huszár, Zoubin Ghahramani, and Máté Lengyel. Bayesian active learning for classification and preference learning. arXiv preprint arXiv:1112.5745, 2011.
 
 Benjamin T Vincent and Tom Rainforth. The DARC toolbox: automated, flexible, and efficient delayed and risky choice experiments using bayesian adaptive design. Retrieved from psyarxiv.com/yehjb, 2017.
+
+Kenneth J Ryan. Estimating expected information gains for experimental designs with application to the random fatigue-limit model. Journal of Computational and Graphical Statistics, 12(3):585–603, 2003.
