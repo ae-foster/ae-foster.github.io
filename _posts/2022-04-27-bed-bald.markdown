@@ -132,7 +132,7 @@ $$
 \begin{aligned}
 \hat{I}_\text{NMC-RB}(\xi) &= -\frac{1}{M} \sum_{m=1}^M \sum_c p(y=c\mid \theta_m,\xi) \log\left(\frac{1}{M-1} \sum_{\ell \ne m} p(y=c\mid \theta_\ell,\xi)  \right)  -\frac{1}{M} \sum_{m=1}^M H[p(y\mid \theta_m,\xi)]\\
 &= \frac{1}{M} \sum_{m=1}^M H\left[p(y\mid \theta_m,\xi), \frac{1}{M-1} \sum_{\ell \ne m} p(y\mid \theta_\ell,\xi)  \right]  -\frac{1}{M} \sum_{m=1}^M H[p(y\mid \theta_m,\xi)] \\
-&= \frac{1}{M} \sum_{m=1}^M \text{KL}\left[p(y\mid \theta_m,\xi) \huge\| \frac{1}{M-1} \sum_{\ell \ne m} p(y\mid \theta_\ell,\xi) \right]
+&= \frac{1}{M} \sum_{m=1}^M \text{KL}\left[p(y\mid \theta_m,\xi) \huge{\|} \frac{1}{M-1} \sum_{\ell \ne m} p(y\mid \theta_\ell,\xi) \right]
 \end{aligned}
 $$
 
