@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "BALD and BED: Connecting Bayesian active learning by disagreement and Bayesian experimental design"
-date:   2022-04-14
+date:   2022-04-27
 categories: posts
 authors: Adam Foster
 published: Blog post
