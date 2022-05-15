@@ -6,7 +6,7 @@ categories: papers
 external_url: https://arxiv.org/abs/2106.08161
 external_site: arxiv.org
 authors: Adam Foster, Árpi Vezér, Craig A Glastonbury, Páidí Creed, Sam Abujudeh, Aaron Sim
-published: Preprint
+published: ICML 2022 (long presentation, to appear)
 thumbnail: assets/comp-kang.png
 tag: paper
 ---
