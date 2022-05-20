@@ -9,15 +9,13 @@ thumbnail: assets/bed_bald_illustration.png
 tag: post
 ---
 
-This post discusses the connection between one of my own recent papers, [Deep Adaptive Design (DAD)](https://arxiv.org/abs/2103.02438), and the field of Bayesian reinforcement learning, 
+This post discusses the connection between one of my own papers, [Deep Adaptive Design (DAD)](https://arxiv.org/abs/2103.02438), and the field of Bayesian reinforcement learning. 
 That such a connection exists is hinted at by a high-level appraisal of the DAD method: it solves a sequential decision making problem to optimise a 
 certain objective function, decision optimality is dependent on a *state* which is the experimental data already gathered, and the automated decision maker 
 is a design *policy* network.
 We begin by showing how the sequential Bayesian experimental design problem solved by DAD can be viewed as a 
 [Bayes Adaptive Markov Decision Process (BAMDP)](https://arxiv.org/pdf/1205.3109.pdf), making this connection formally precise.
-There are also key differences between the problem DAD is solving and a *conventional* Bayesian RL problem, in particular, the reward in DAD is intractable. 
-Much of the effort of DAD is in establishing a differentiable surrogate for the true objective.
-Another feature of the DAD method is that it avoids explicitly estimating any posterior distributions (aka belief states).
+There are also key differences between the problem DAD is solving and a *conventional* Bayesian RL problem, in particular, the reward in DAD is intractable.
 
 Given this connection, the question arises "what use can we make of it?"
 First, there are rather natural extensions of DAD to more general objective functions.
@@ -47,15 +45,7 @@ $$s_t$$ and $$a_t$$, the transitions are Markovian.
 Finally, by making the transition $$s_t \overset{a_{t}}{\longrightarrow} s_{t+1}$$, the agent receives a random reward $$r_t \sim R(r|s_t,a_t,s_{t+1}) \in \R$$.
 The agent's objective is to maximise the discounted sum of rewards $$\sum_{t=0}^T \gamma^t r_t$$.
 Given the Markovian nature of the problem, it is sufficient to choose actions according to some *policy* $$\pi$$, where $$a_t = \pi(s_t)$$.
-The optimality condition for a policy is
-
-$$
-\begin{aligned}
-\pi^* = \argmax_{\pi} \mathcal{J}(\pi),
-\end{aligned}
-$$
-
-where
+The optimality condition for a policy is  $$\pi^* = \argmax_{\pi} \mathcal{J}(\pi)$$, where
 
 $$
 \begin{aligned}
@@ -248,7 +238,7 @@ $$
 
 can be optimised with respect to $$\pi$$ by direct policy gradients.
 In the experimental design context, this opens the door to two relatively simple extensions of DAD.
-First, we can assign a (differentiable) cost to each design. Suppose we augment the original expected information gain objective with the negative sum of the costs of the designs. Using $$\lambda$$ to trade off cost and information, we arrive at
+For example, we can assign a (differentiable) cost to each design. Suppose we augment the original expected information gain objective with the negative sum of the costs of the designs. Using $$\lambda$$ to trade off cost and information, we arrive at
 
 $$
 \begin{aligned}
@@ -258,22 +248,23 @@ $$
 
 which we can tackle using an approach that is essentially the same as DAD.
 Second, we can consider different measures of the quality of the final posterior distribution.
-For instance, with a one-dimensional $$\theta$$, we might be more interested in reducing posterior \emph{variance} than posterior entropy.
+For instance, with a one-dimensional $$\theta$$, we might be more interested in reducing posterior variance than posterior entropy.
 We could take the reward function
 
 $$
 \begin{aligned}
-r^\text{variance}_t = \Var_{p(\theta|h_{t-1})}[\theta] - \Var_{p(\theta|h_{t})}[\theta].
+r^\text{variance}_t = \text{Var}_{p(\theta|h_{t-1})}[\theta] - \text{Var}_{p(\theta|h_{t})}[\theta].
 \end{aligned}
 $$
 
-Whilst there are certain reasons why the entropy approach is considered more theoretically well-justified, using a different functional of the posterior distribution as a reward signal does fit relatively naturally into the DAD framework. 
+Whilst there are certain reasons why the entropy approach is considered more theoretically well-justified, using a different functional of the
+posterior distribution as a reward signal does fit relatively naturally into the DAD framework. 
 The remaining piece of the puzzle would be whether that functional could be estimated efficiently as DAD estimates the information gain using sPCE.
 For the variance, we have
 
 $$
 \begin{aligned}
-\mathbb{E}_{p(\theta)p(h_T|\theta,\pi)}\left[ \sum_{t=1}^T r^\text{variance}_t \right] \ge \Var_{p(\theta)}[\theta] -  \mathbb{E}_{p(\theta)p(h_T|\theta,\pi)}\left[ (\theta - f_{\phi'}(h_T))^2 \right]
+\mathbb{E}_{p(\theta)p(h_T|\theta,\pi)}\left[ \sum_{t=1}^T r^\text{variance}_t \right] \ge \text{Var}_{p(\theta)}[\theta] -  \mathbb{E}_{p(\theta)p(h_T|\theta,\pi)}\left[ (\theta - f_{\phi'}(h_T))^2 \right]
 \end{aligned}
 $$
 
@@ -284,13 +275,13 @@ To conclude, making the formal connection between sequential Bayesian experiment
 control theory to improve our ability to plan sequential experiments.
 Whilst the direct policy optimisation approach of DAD works remarkably well, understanding the connection to RL should aid us when this training method begins to break down.
 The application of existing Bayesian RL algorithms to experimental design is an exciting area for new research that is well within reach.
+(*2022 update*: in fact, this is the angle that several recent papers have explored.)
 
 A case of potential difficulty for DAD, where such insights may be useful, is in long-horizon experiments. 
 In order to plan effectively for long experiments, DAD simulates thousands of possible experimental trajectories.
 However, the efficiency of this simulation is likely to drop as $$T$$ increases.
 DAD is extremely data hungry: it resimulates completely new trajectories at each gradient step.
 This avoids any problems of the training data becoming out-of-date, but it increases the training cost.
-
 
 It is also conceivable that, in some settings, it is impossible to plan for all future eventualities.
 The RL analogy would be a strongly stochastic environment in which a game is selected at random from a long list at the start of play.
@@ -301,7 +292,7 @@ In the RL setting, that would mean discovering which game is being played before
 Once this discovery is made with good confidence, we can retrain to learn to play that specific game.
 In the experimental design setting, we are often in the 'unknown game' setting. 
 This is because, until we have observed some data, it is almost impossible to know which later experiments will be optimal to run.
-The DAD approach is to simulate different possibilities and learn to `play' well across the board.
+The DAD approach is to simulate different possibilities and learn to 'play' well across the board.
 The retraining alternative would be a hybrid approach between the standard greedy method and DAD in which some real data is used to retrain the policy as we progress.
 
 	
