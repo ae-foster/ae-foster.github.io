@@ -322,3 +322,11 @@ If you'd like to cite it, you can use
 
 ## References
 
+Adam Foster, Desi R Ivanova, Ilyas Malik and Tom Rainforth. Deep Adaptive Design: Amortizing Sequential Bayesian Experimental Design. In Proceedings of the 38th International Conference on Machine Learning, pages 3384-3395. PMLR, 2021.
+
+Arthur Guez, David Silver, and Peter Dayan. Efficient bayes-adaptive reinforcement learning using sample-based search. In Advances in neural information processing systems, pages 1025–1033, 2012.
+
+Xun Huan and Youssef M Marzouk. Sequential bayesian optimal experimental design via approximate dynamic programming. arXiv preprint arXiv:1604.08320, 2016.
+
+Luisa Zintgraf, Kyriacos Shiarlis, Maximilian Igl, Sebastian Schulze, Yarin Gal, Katja Hofmann, and Shimon Whiteson. Varibad: A very good method for bayes-adaptive deep rl via meta-learning. ICLR 2020.
+
