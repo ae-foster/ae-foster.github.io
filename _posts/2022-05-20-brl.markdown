@@ -1,0 +1,324 @@
+---
+layout: post
+title:  "Deep Adaptive Design and Bayesian reinforcement learning"
+date:   2022-05-20
+categories: posts
+authors: Adam Foster
+published: Blog post
+thumbnail: assets/bed_bald_illustration.png
+tag: post
+---
+
+This post discusses the connection between one of my own recent papers, [Deep Adaptive Design (DAD)](https://arxiv.org/abs/2103.02438), and the field of Bayesian reinforcement learning, 
+That such a connection exists is hinted at by a high-level appraisal of the DAD method: it solves a sequential decision making problem to optimise a 
+certain objective function, decision optimality is dependent on a *state* which is the experimental data already gathered, and the automated decision maker 
+is a design *policy* network.
+We begin by showing how the sequential Bayesian experimental design problem solved by DAD can be viewed as a 
+[Bayes Adaptive Markov Decision Process (BAMDP)](https://arxiv.org/pdf/1205.3109.pdf), making this connection formally precise.
+There are also key differences between the problem DAD is solving and a *conventional* Bayesian RL problem, in particular, the reward in DAD is intractable. 
+Much of the effort of DAD is in establishing a differentiable surrogate for the true objective.
+Another feature of the DAD method is that it avoids explicitly estimating any posterior distributions (aka belief states).
+
+Given this connection, the question arises "what use can we make of it?"
+First, there are rather natural extensions of DAD to more general objective functions.
+Second, it should be possible to apply standard RL techniques, such as [Q-learning](https://en.wikipedia.org/wiki/Q-learning) and [policy optimization](https://arxiv.org/abs/1502.05477)
+to the sequential 
+Bayesian experimental design problem, which may be particularly useful for long- or infinite-horizon problems.
+<!--more-->
+
+## Update
+This post was originally written as part of my PhD thesis back in September 2021.
+Since then, to my giddy delight, the community appears to have latched onto the DAD-RL connection in not one but three papers that I am aware of:
+[Lim et al.](https://arxiv.org/abs/2203.04272), [Blau et al.](https://arxiv.org/abs/2202.00821) and [Asano](https://arxiv.org/abs/2202.07472),
+plus the highly related [Shen et al.](https://arxiv.org/abs/2110.15335).
+I hope to dig into these papers in more detail in future posts.
+
+
+## Background on Bayesian Reinforcement Learning
+### Markov Decision Processes
+The [Markov Decision Process (MDP)](https://en.wikipedia.org/wiki/Markov_decision_process) is a highly successful mathematical framework for sequential decision problems 
+in a known environment.
+Formally, a MDP consists of a state space $$S$$, an action space $$A$$, a transition model $$\mathcal{P}$$, a reward distribution $$R$$, a discount factor 
+$$0 \le \gamma \le 1$$ and a time horizon $$T$$ which may be infinite.
+An agent operates in the MDP by moving between different states in discrete time.
+For example, if the agent is in state $$s_t$$ at time $$t$$ and chooses to play action $$a_t$$, then the next state $$s_{t+1}$$ will be sampled randomly 
+according to the transition model $$s_{t+1} \sim \mathcal{P}(s|s_t,a_t)$$. Since the distribution over the next state depends only on
+$$s_t$$ and $$a_t$$, the transitions are Markovian.
+Finally, by making the transition $$s_t \overset{a_{t}}{\longrightarrow} s_{t+1}$$, the agent receives a random reward $$r_t \sim R(r|s_t,a_t,s_{t+1}) \in \R$$.
+The agent's objective is to maximise the discounted sum of rewards $$\sum_{t=0}^T \gamma^t r_t$$.
+Given the Markovian nature of the problem, it is sufficient to choose actions according to some *policy* $$\pi$$, where $$a_t = \pi(s_t)$$.
+The optimality condition for a policy is
+
+$$
+\begin{aligned}
+\pi^* = \argmax_{\pi} \mathcal{J}(\pi),
+\end{aligned}
+$$
+
+where
+
+$$
+\begin{aligned}
+\mathcal{J}(\pi) = \mathbb{E}_{ s_0\sim p(s_0) \prod_{t=0}^T a_t=\pi(s_t), s_{t+1}\sim \mathcal{P}(s|s_t,a_t), r_t \sim R(r|s_t,a_t,s_{t+1}) }\left[ \sum_{t=0}^T \gamma^t r_t \right].
+\end{aligned}
+$$
+
+In a classical MDP, we assume that $$\mathcal{P}$$ and $$R$$ are known during the planning phase, when the agent devises their policy $$\pi$$.
+Of particular utility in planning a policy is the value function, defined as
+
+$$
+\begin{aligned}
+V^\pi(s) = \mathbb{E}_{s'\sim \mathcal{P}(\cdot|s,\pi(s)), r \sim R(r|s,\pi(s),s')}\left[ r + \gamma V^\pi(s') \right]
+\end{aligned}
+$$
+
+and the $$Q$$-function
+
+$$
+\begin{aligned}
+Q^\pi(s, a) = \mathbb{E}_{s'\sim \mathcal{P}(\cdot|s,a), r \sim R(r|s,a,s')}\left[ r + \gamma V^\pi(s') \right].
+\end{aligned}
+$$
+
+These equations are valid when $$T=\infty$$, for finite time horizon we also have to take account of time $$t$$ in state evaluations.
+
+
+### Bayes Adaptive Markov Decision Processes
+The [BAMDP](https://scholarworks.umass.edu/dissertations/AAI3039353/) is one approach to generalising the MDP to deal with unknown transition models. 
+In the BAMDP, the agent retains an explicit posterior distribution over the transition model called a belief state. 
+This allows a formally elegant approach to behaviour under uncertainty which can trade off exploration (learning the transition model) and exploitation 
+(executing actions that receive a high reward). 
+
+To set this up formally using the notation of [Guez et al.](https://arxiv.org/abs/1205.3109), we begin by considering an outer probabilistic model over the transition 
+probabilities with prior $$P(\mathcal{P})$$.
+Given a history of states, actions and rewards $$h_t = s_0a_0\dots r_{t-1}a_{t-1}s_t$$, we can compute a posterior distribution on $$\mathcal{P}$$ by
+
+$$
+\begin{aligned}
+P(\mathcal{P}|h_t) \propto P(\mathcal{P})P(h_t|\mathcal{P}) = P(\mathcal{P}) \prod_{\tau=0}^t \mathcal{P}(s_{\tau+1}|s_\tau,a_\tau).
+\end{aligned}
+$$
+
+To bring this back into the MDP formulation, we consider an augmented state space $$S^+$$ which consists of entire histories, 
+and which encapsulates both the current state and our beliefs about the transition model.
+Transitions in the augmented state space $$S^+$$ are given by integrating over the current beliefs on $$\mathcal{P}$$
+
+$$
+\begin{aligned}
+\mathcal{P}^+(h_{t+1}|h_t,a_t) = \int P(\mathcal{P}|h_t)\mathcal{P}(s_{t+1}|s_t,a_t) \, d\mathcal{P}.
+\end{aligned}
+$$
+
+It is also possible for BAMDPs to incorporate unknown reward distributions (see e.g. [this paper](https://arxiv.org/abs/1910.08348)), 
+where an outer model over reward distributions is updated on the basis of $$h_t$$ in the same manner as for the transition probabilities. 
+Specifically, if we have a prior $$P(R)$$ over reward distributions, then the reward function for playing action $$a_t$$ in augmented state $$h_t$$ is
+
+$$
+\begin{aligned}
+R^+(r|h_t,a_t,h_{t+1}) = \int P(R|h_{t+1})R(r|s_t,a_t,s_{t+1}) \, dR.
+\end{aligned}
+$$
+
+Combining these gives a new MDP with state space $$S^+$$ of histories, unchanged action space $$A$$, augmented transition model $$\mathcal{P}^+$$, 
+augmented reward distribution $$R^+$$, discount factor $$\gamma$$ and time horizon $$T$$.
+Optimal action in this new MDP gives the optimal trade-off between exploration and exploitation.
+
+## The Bayesian RL formulation of DAD
+In [DAD](https://arxiv.org/abs/2103.02438), we choose a sequence of designs $$\xi_1,\dots,\xi_T$$ with a view to maximising the expected information gained about 
+a latent parameter of interest $$\theta$$.
+To place DAD in a Bayesian RL setting, we begin by associating the design $$\xi_t$$ chosen before observing an outcome with the action $$a_{t-1}$$.
+The difference in time labels is necessary because $$\xi_t$$ is chosen before $$y_t$$ is observed.
+Since the observation distribution $$p(y|\xi,\theta)$$ depends on the unknown $$\theta$$, we are not in a MDP, but rather a BAMDP.
+As in the previous section, it seems sensible to consider the state space for DAD as the space of histories $$h_t = \xi_1y_1\dots\xi_ty_t$$.
+Uncertainty over the transition model in DAD is captured by uncertainty in $$\theta$$. Specifically, we have the following transition distribution for history states
+
+$$
+\begin{aligned}
+p(h_{t+1}|h_t,\xi_{t+1}) = \int p(\theta|h_t)p(y_{t+1}|\xi_{t+1},\theta) \, d\theta
+\end{aligned}
+$$
+
+which is the analogue of the BAMDP transition probabilities, but now expressed in the notation of experimental design.
+Unlike the standard reinforcement learning setting, there are no external rewards in DAD.
+Instead, rewards are defined in terms of information gathered about $$\theta$$.
+Specifically, we can take the reward distribution on augmented states $$R^+(r|h_t,a_t,h_{t+1})$$ to be a deterministic function of $$h_{t+1}$$ that represents the
+information gained about $$\theta$$ by moving from $$h_t$$ to $$h_{t+1}$$. This is given by the reduction in entropy
+
+$$
+\begin{aligned}
+R^+(h_t,a_t,h_{t+1}) = H[p(\theta|h_{t})] - H[p(\theta|h_{t+1})].
+\end{aligned}
+$$
+
+To complete the BAMDP specification, we take $$\gamma=1$$ and we use a time horizon of $$T$$.
+This gives the objective function for policies
+
+$$
+\begin{aligned}
+\mathcal{J}(\pi) =  \mathbb{E}\left[\sum_{t=1}^T r_t \right] = \mathbb{E}_{p(\theta)p(h_T|\theta,\pi)}\left[\sum_{t=1}^T H[p(\theta|h_{t-1})] - H[p(\theta|h_t)] \right].
+\end{aligned}
+$$
+
+To connect this with the objective that is used in DAD, we apply Theorem 1 of the DAD paper, which tells us that
+
+$$
+\begin{aligned}
+\mathcal{J}(\pi) =\mathbb{E}_{p(\theta)p(h_T|\theta,\pi)}\left[\sum_{t=1}^T H[p(\theta|h_{t-1})] - H[p(\theta|h_t)] \right] \overset{\text{Theorem 1}}{=} \mathcal{I}_T(\pi)
+\end{aligned}
+$$
+
+where
+
+$$
+\begin{aligned}
+\mathcal{I}_T(\pi) = \mathbb{E}_{p(\theta)p(h_T|\theta,\pi)}\left[ \log\frac{p(h_T|\theta,\pi)}{\mathbb{E}_{p(\theta')}[p(h_T|\theta',\pi)]} \right].
+\end{aligned}
+$$
+
+In summary, we can cast the problem that DAD solves as a BAMDP. We identify designs with actions, experimental histories with augmented states, we 
+use the probabilistic model to give a natural transition distribution on these states, we introduce non-random rewards that are one-step information gains, we set $$\gamma=1$$ 
+and generally assume a finite number of experiment iterations $$T$$.
+
+## What makes the experimental design problem distinctive?
+Having established a theoretical connection between sequential Bayesian experimental design and Bayesian RL, one might naturally ask whether there is any reason to 
+develop specialist algorithms for experimental design when general purpose Bayesian RL algorithms are applicable.
+First, we focus on the reward structure of the Bayesian experimental design problem.
+The rewards $$r_t = H[p(\theta|h_{t-1})] - H[p(\theta|h_t)]$$ are generally intractable, requiring Bayesian inference on $$\theta$$.
+Rather than attempting to estimate this reward, DAD proposes the sPCE lower bound on the total expected informationn gain under policy $$\pi$$, namely
+
+$$
+\begin{aligned}
+\mathcal{I}_T(\pi) \ge \mathcal{L}_T(\pi,L) = \mathbb{E}_{p(\theta_0)p(h_T|\theta_0,\pi)p(\theta_{1:L})}\left[ \log \frac{p(h_T|\theta_0,\pi)}{\frac{1}{L+1}\sum_{\ell=0}^L p(h_T|\theta_\ell,\pi) } \right].
+\end{aligned}
+$$
+
+Interestingly, there is a way to interpret the sPCE objective within the RL framework.
+First, we use *root sampling* to sample $$\theta_0$$ and $$h_T$$ together.
+We also fix the contrasts $$\theta_{1:L}$$.
+Finally, we use the surrogate rewards
+
+$$
+\begin{aligned}
+\tilde{r}_t = \log\frac{p(h_t|\theta_0,\pi)}{\frac{1}{L+1}\sum_{\ell=0}^L p(h_t|\theta_\ell,\pi)} - \log\frac{p(h_{t-1}|\theta_0,\pi)}{\frac{1}{L+1}\sum_{\ell=0}^L p(h_{t-1}|\theta_\ell,\pi)}.
+\end{aligned}
+$$
+
+Since these rewards depend on $$\theta_0$$, we can treat them as randomised rewards if we are only conditioning on $$h_t$$.
+
+One important feature of these rewards is that, whilst intractable, the surrogate $$\mathcal{L}_T(\pi,L)$$ is differentiable with respect to the designs
+$$(\xi_t)_{t=1}^T$$ and observations $$(y_t)_{t=1}^T$$. In the simplest form of DAD, we further assume a differentiable relationship between
+$$y_t$$ and $$\xi_t$$ that is encapsulated by a reparametrisable way to sample $$p(y|\theta,\xi)$$. Concretetly, for example, we might have 
+$$y|\theta,\xi = \mu(\theta,\xi) + \sigma(\theta,\xi)\varepsilon$$ where $$\varepsilon \sim N(0,1)$$ and $$\mu$$ and $$\sigma$$ are differentiable functions.
+The result of these assumptions is that we can directly differentiate the surrogate objective $$\mathcal{L}_T(\pi,L)$$ with respect to the 
+parameters $$\phi$$ of the policy network $$\pi_\phi$$ that generates the designs $$(\xi_t)_{t=1}^T$$ according to the formula $$\xi_t = \pi_\phi(h_{t-1})$$.
+DAD optimises the policy $$\pi_\phi$$ directly by gradient descent on $$\mathcal{L}_T(\pi,L)$$.
+
+Thus, DAD can be characterised in RL language as a direct policy optimisation method. Whilst [direct policy optimisation methods](https://arxiv.org/abs/1906.06062)
+are used in RL, they are far from the norm, with methodologies such as [Q-learning](https://link.springer.com/article/10.1007/BF00992698) and 
+[actor-critic](https://proceedings.neurips.cc/paper/1999/file/6449f44a102fde848669bdd9eb6b76fa-Paper.pdf) being more dominant.
+This may be because RL does not typically assume that the reward function is differentiable: for example, rewards from a real environment rarely come with gradient 
+information. It may also be because discrete action problems are more the focus.
+
+DAD also contrasts with many approaches to *Bayesian* RL in that it avoids the estimation of the posteriors $$p(\theta|h_t,\pi)$$.
+In Bayesian RL, these posterior distributions are referred to as *belief states*.
+Many methods for tackling Bayesian RL problems utilise the estimation of belief states.
+DAD instead relies on an approach that is closer to the method of root sampling.
+This is also one difference between DAD and a previous approach to [non-greedy sequential Bayesian experimental design](https://arxiv.org/abs/1604.08320).
+
+## New objective functions for DAD
+Seeing DAD in the framework of Bayesian RL naturally invites the question of whether the general DAD methodology can be applied to objective functions 
+(rewards) that are not information gains.
+The preceding discussion suggests that, using root sampling so a dependence on $$\theta$$ is possible, we could consider rewards of the form
+
+$$
+\begin{aligned}
+r^\text{general}_t = R(\theta,h_t,\epsilon_t)
+\end{aligned}
+$$
+
+where $$R$$ is a known differentiable function and $$\epsilon_t$$ is an independent noise random variable.
+Clearly, the information gain reward $$r_t$$ fits this pattern, being a function of $$h_t$$ only.
+Combining the differentiable reward function with the reparametrisation assumption would mean that the general reward
+
+$$
+\begin{aligned}
+\mathcal{J}^\text{general}(\pi) = \mathbb{E}_{p(\theta)p(h_T)p(\epsilon_{1:T})}\left[\sum_{t=1}^T r^\text{general}_t \right]
+\end{aligned}
+$$
+
+can be optimised with respect to $$\pi$$ by direct policy gradients.
+In the experimental design context, this opens the door to two relatively simple extensions of DAD.
+First, we can assign a (differentiable) cost to each design. Suppose we augment the original expected information gain objective with the negative sum of the costs of the designs. Using $$\lambda$$ to trade off cost and information, we arrive at
+
+$$
+\begin{aligned}
+\mathcal{J}^\text{costed}(\pi) = \mathcal{I}_T(\pi) - \lambda \mathbb{E}\left[\sum_{t=1}^T C(\xi_t) \right]
+\end{aligned}
+$$
+
+which we can tackle using an approach that is essentially the same as DAD.
+Second, we can consider different measures of the quality of the final posterior distribution.
+For instance, with a one-dimensional $$\theta$$, we might be more interested in reducing posterior \emph{variance} than posterior entropy.
+We could take the reward function
+
+$$
+\begin{aligned}
+r^\text{variance}_t = \Var_{p(\theta|h_{t-1})}[\theta] - \Var_{p(\theta|h_{t})}[\theta].
+\end{aligned}
+$$
+
+Whilst there are certain reasons why the entropy approach is considered more theoretically well-justified, using a different functional of the posterior distribution as a reward signal does fit relatively naturally into the DAD framework. 
+The remaining piece of the puzzle would be whether that functional could be estimated efficiently as DAD estimates the information gain using sPCE.
+For the variance, we have
+
+$$
+\begin{aligned}
+\mathbb{E}_{p(\theta)p(h_T|\theta,\pi)}\left[ \sum_{t=1}^T r^\text{variance}_t \right] \ge \Var_{p(\theta)}[\theta] -  \mathbb{E}_{p(\theta)p(h_T|\theta,\pi)}\left[ (\theta - f_{\phi'}(h_T))^2 \right]
+\end{aligned}
+$$
+
+where $$f_{\phi'}$$ is a learnable function. Note the similarity with the [Barber--Agakov bound](http://aivalley.com/Papers/MI_NIPS_final.pdf).
+
+## RL algorithms for Bayesian experimental design
+To conclude, making the formal connection between sequential Bayesian experimental design opens up the possibility of using the vast literature on Bayesian RL and 
+control theory to improve our ability to plan sequential experiments.
+Whilst the direct policy optimisation approach of DAD works remarkably well, understanding the connection to RL should aid us when this training method begins to break down.
+The application of existing Bayesian RL algorithms to experimental design is an exciting area for new research that is well within reach.
+
+A case of potential difficulty for DAD, where such insights may be useful, is in long-horizon experiments. 
+In order to plan effectively for long experiments, DAD simulates thousands of possible experimental trajectories.
+However, the efficiency of this simulation is likely to drop as $$T$$ increases.
+DAD is extremely data hungry: it resimulates completely new trajectories at each gradient step.
+This avoids any problems of the training data becoming out-of-date, but it increases the training cost.
+
+
+It is also conceivable that, in some settings, it is impossible to plan for all future eventualities.
+The RL analogy would be a strongly stochastic environment in which a game is selected at random from a long list at the start of play.
+The agent, therefore, has to first discover which game it is playing, and then to play it successfully.
+If all planning is conducted up-front, then the RL agent has to learn how to play every single game well before starting on the real environment.
+The alternative is to introduce some real data and retrain the policy as we go.
+In the RL setting, that would mean discovering which game is being played before knowing how to play the games, which could be achieved with a much simpler policy.
+Once this discovery is made with good confidence, we can retrain to learn to play that specific game.
+In the experimental design setting, we are often in the 'unknown game' setting. 
+This is because, until we have observed some data, it is almost impossible to know which later experiments will be optimal to run.
+The DAD approach is to simulate different possibilities and learn to `play' well across the board.
+The retraining alternative would be a hybrid approach between the standard greedy method and DAD in which some real data is used to retrain the policy as we progress.
+
+	
+
+
+## Citation
+This post is an edited version of Section 7.3 from [my thesis](https://ae-foster.github.io/assets/thesis.pdf).
+If you'd like to cite it, you can use
+
+```bibtex
+@phdthesis{foster2022thesis,
+  Author = {Foster, Adam},
+  Title = {Variational, Monte Carlo and Policy-Based Approaches to Bayesian Experimental Design},
+  school = {University of Oxford},
+  year={2022}
+}
+```
+
+## References
+
