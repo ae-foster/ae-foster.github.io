@@ -1,0 +1,19 @@
+---
+layout: post
+title:  "ICML 2022 Long Presentation: Contrastive Mixture of Posteriors"
+date:   2022-07-19
+categories: talks
+external_url: https://www.youtube.com/watch?v=oAtCmOnMLg8
+external_site: youtube.com
+thumbnail: assets/comp-talk.png
+tag: talk
+---
+
+This is the long presentation that I delivered at ICML 2022 for the paper [Contrastive Mixture of Posteriors for Counterfactual Inference, Data Integration and Fairness](https://arxiv.org/abs/2106.08161).
+The project was born out of several "grand challenges" in computational biology and the analysis of single-cell RNA-seq data.
+One challenge is integrating different datasets that exhibit some kind of technical variation.
+Another is predicting the effects of drugs and gene knock-outs on certain cells.
+In this project, we were able to translate these problems into a representation learning setting and then focus on computational methods to enforce the all-important contraint: z independent of c.
+
+
+<!--more-->
