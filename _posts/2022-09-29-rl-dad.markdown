@@ -1,0 +1,159 @@
+---
+layout: post
+title:  "Optimising adaptive experimental designs with RL"
+date:   2022-09-29
+categories: posts
+authors: Adam Foster
+published: Blog post
+thumbnail: assets/model-selection-thumb.png
+tag: post
+---
+
+This post follows up on a [previous one]({% post_url 2022-05-20-brl %}) which discussed the connection between Reinforcement Learning (RL) and [Deep Adaptive Design (DAD)](https://arxiv.org/abs/2103.02438). 
+Here, I am taking a deeper dive into three 2022 papers that build off of DAD and use RL to train policies for adaptive experimental design: [Blau et al.](https://arxiv.org/abs/2202.00821), [Asano](https://arxiv.org/abs/2202.07472) and [Lim et al.](https://arxiv.org/abs/2203.04272). 
+This is both a natural and interesting direction because training with RL removes some of the major limitations of DAD, such as struggling to handle non-differentiable models and discrete design spaces, and allows us to tap into advances in RL to optimise design policies.
+<!--more-->
+
+## Adaptive experimental design and DAD
+
+*Note*: you can safely skip this section if you are already familiar with the DAD paper.
+
+Adaptive design is an iterative procedure that consists of repeatedly
+0. designing experiments based on existing knowledge,
+0. running those experiments and obtaining experimental outcomes,
+0. updating knowledge based on data obtained so far. 
+
+In the Bayesian formulation, we have a model with prior $$p(\theta)$$ and a likelihood $$p(y\mid\theta, \xi)$$. The three steps of adaptive design are now
+0. selecting design $$\xi_t$$ using $$\xi_{1:t-1},y_{1:t-1}$$,
+0. obtaining outcome $$y_t$$ by running an experiment with design $$\xi_t$$, 
+0. updating the posterior $$p(\theta\mid\xi_{1:t}, y_{i:t})$$.
+
+In DAD, the choice of $$\xi_t$$ is made by a neural network design policy $$\pi$$. This policy is trained by gradient descent to maximize a lower bound on the total expected information gain from the sequence of experiments $$h_T = (\xi_1,y_1),\dots,(\xi_T,y_T)$$. This lower bound is called sequential prior contrastive estimation (sPCE)
+
+$$
+
+\mathcal{I}_T(\pi) = \mathbb{E}_{p(\theta)p(h_T\mid\theta,\pi)} \left[ \log \frac{p(h_T\mid\theta,\pi)}{p(h_T\mid \pi) } \right] \ge \text{sPCE}_{T,L}(\pi) = \mathbb{E}_{p(\theta_{0:L})p(h_T\mid\theta_0,\pi)} \left[ \log \frac{p(h_T\mid\theta_0,\pi)}{\frac{1}{L+1} \sum_{\ell=0}^L p(h_T\mid\theta_\ell,\pi) } \right].
+
+$$
+
+The policy network is designed to account for the permutation invariance of experimental histories: these are represented using a permutation invariant neural representation. This was an innovation compared to earlier work, which explicitly computed the posterior $$p(\theta\mid\xi_{1:t},y_{1:t})$$ at each step. The policy is updated by gradient descent on the policy parameters. Typically, this is by naive backprop, which is valid for reparametrisable likelihoods. The alternative is to use a score function gradient estimator, for example this is necessary for discrete $$y$$.
+
+
+## New direction: using RL to train the design policy
+
+In my [previous post]({% post_url 2022-05-20-brl %}), I discussed how the sequential experimental design problem can naturally be cast as Bayes Adaptive Markov Decision Process.
+When I wrote that in Autumn 2021, this connection hadn't been used practically to train design policies.
+In February-March 2022, new papers hit arXiv using RL to train design policies.
+In this post I will talk about the details of those papers. 
+I am specifically going to discuss the papers [Blau et al. (2022)](https://arxiv.org/abs/2202.00821), [Asano (2022)](https://arxiv.org/abs/2202.07472) and [Lim et al. (2022)](https://arxiv.org/abs/2203.04272) because these are the papers that most directly use ideas from DAD, and hence are closest to my own expertise. 
+I have therefore set aside important papers such as [Huan & Marzouk (2016)](https://arxiv.org/abs/1604.08320) and [Shen & Huan (2021)](https://arxiv.org/abs/2110.15335).
+For the papers I will tackle in this post, I want to pre-emptively apologise for any errors of understanding that I may make. 
+I have decided to cover the papers in the order that they were first on arXiv because, whilst a little arbitrary, this is also a logical order to go through them conceptually.
+
+## 'Optimizing Sequential Experimental Design with Deep Reinforcement Learning' by Blau et al.
+
+This paper kicks off by formulating the adaptive experimental design problem in the language of RL.
+Blau et al. formulate the problem as a [Hidden Parameter MDP (HiP-MDP)](https://arxiv.org/abs/1308.3513).
+The HiP-MDP is a nice formulation I hadn't seen before that seems almost custom-made for the sequential experimental design problem. 
+In this set-up, the states are histories $$h_t$$, the actions are designs $$\xi_t$$, the hidden parameters are $$\theta_{0:L}$$ and the transition function is the likelihood $$p(y\mid \theta_0,\xi)$$.
+
+Exactly formulating the problem in the language of RL is a slightly finicky exercise!
+For instance, the sequence $$(\xi_1,y_1),(\xi_2,y_2),\dots$$ is not Markovian; the sequence $$h_1,h_2,\dots$$ *is* Markovian, but to evaluate the sPCE objective you also need access to $$\theta_{0:L}$$, so should these form part of the state or part of a stochastic reward? I previously described the adaptive experimental design problem as a BAMDP; it's also possible to describe it as a pure MDP with an extended state space. I like the HiP-MDP as it's perhaps the cleanest.
+
+
+### State representation and reward
+
+As in DAD, Blau et al. use permutation invariant state representations of the form
+
+$$
+
+B_t = \sum_{\tau=1}^t ENC_\psi(\xi_\tau,y_\tau)
+
+$$
+
+where $$ENC_\psi$$ is a neural net encoder. The policy has access to the state only via this neural state representation.
+
+Blau et al. base their reward on the sPCE objective. This, combined with the neural state representation, has the distinct advantage of avoiding any explicit computation of posteriors during training and deployment.
+There are several RL reward structures that can be devised based on sPCE. The simplest **terminal-only** form of the reward is to have $$0$$ reward up to time $$T-1$$, and then a reward of
+
+$$
+
+g(\theta_{0:L},h_T) = \log \frac{p(h_T\mid\theta_0,\pi)}{\frac{1}{L+1}p(h_T\mid\theta_\ell,\pi)}
+
+$$
+
+at time $$T$$. This sparse reward can present problems for RL algorithms. An equivalent form is to use the **step-by-step** rewards $$r_t = g(\theta_{0:L},h_t) - g(\theta_{0:L},h_{t-1})$$.
+This telescopes nicely to assign the correct reward to the sequence of designs and observations, whilst providing a reward signal at every step. Blau et al. adopt the step-by-step reward, and give an efficient way to compute it.
+They compare experimentally to the terminal-only reward, and show that step-by-step rewards are better across the board.
+
+
+### RL stuff
+#### Explore-exploit
+In Blau et al., the design policy is stochastic. As the authors say, exploration is certainly necessary for RL and modern RL algorithms incorporate many tricks to enable good exploration. Incorporating exploration can avoid the policy becoming trapped in local optima. It remains an open question (at least for me) whether a stochastic policy would also be beneficial for the original DAD formulation using stochastic gradient optimisation. Whilst adding explicit exploration is the norm in RL, it certainly is not the norm when optimising with stochastic gradient descent, even when we know the objective is not convex. 
+
+#### Choice of RL algorithm
+This was a part that I was interested to read, simply because I don’t know RL well enough to know what kind of algorithm would be appropriate for adaptive experimental design problem. The authors went with Randomized Ensembled Double Q-learning (REDQ), but didn’t dig much into the choice. I’m still a bit in the dark about whether this is a particularly good algorithm to have chosen. 
+
+### Experiments
+
+One thing that the experiments demonstrated very nicely is that the RL version of DAD is widely applicable: it works for discrete design spaces and non-differentiable models with no extra effort! 
+The models they picked to look at were
+0. Source location with inverse square decaying signal, introduced in DAD. Everything is continuous, so they compare against DAD, showing that RL has a decent edge.
+1. Constant elasticity of substitution, which we studied in [SG-BOED](https://arxiv.org/abs/1911.00294). Here, $$y$$ is only differentiable over part of its range due to clipping, requiring specialist treatment for DAD, but presenting no issues for RL. Here, there are substantial qualitative differences between DAD designs and RL designs- it appears RL explores the design space much more than DAD.
+2. Predator-prey model which was [previously tackled with an SMC approach](https://royalsocietypublishing.org/doi/full/10.1098/rsif.2020.0156). Interestingly, adaptive RL-based optimisation doesn’t do any better here than myopic design using SMC. Theoretically, it has been proved that when $$\theta$$ consists of all the parameters of the model, then the greedy strategy achieves a reward at least $$(1-e)R^*$$ where $$R^*$$ is the reward of the best non-greedy strategy. But, for adaptive experiments, this relies on the ability to compute intermediate posterior distributions accurately. My hunch is that SMC is a good practical choice here because the posteriors on 2D $$\theta$$ are quite easy to approximate. The authors also suggest that the state representations could be to blame. This could be tested empirically by increasing the representation dimension, increasing the encoder network size or using extra tricks like self-attention.
+
+### Summing up
+The results are very promising. I was curious how difficult training was. We hear colloquially that deep RL is 'very hard to train', but it's unclear to me at least whether this refers exclusively to extremely high-dimensional problems.
+I was glad to see this work published at ICML 2022!
+
+
+## 'Sequential Bayesian experimental designs via reinforcement learning' by Asano
+
+They are moving beyond permutation-invariant. For example, to incorporate constraints on $$\|\xi_t-\xi_{t-1}\|$$
+They make a distinction between actions and designs so that
+
+$$
+
+\xi_t = a_t + \xi_{t-1}
+
+$$
+
+Use terminal-only rewards
+
+SAC because it can handle discrete and continuous action spaces
+
+Stochastic policy again
+
+But are they setting up a proper MDP?????????
+
+This is a bit of riskier one. I am not sure they are doing things right. For example, what is the input to the policy. How are they applying DAD to death process?
+
+I shouldn't have jumped the gun and spoken to Takashi.
+
+
+## 'Policy-Based Bayesian Experimental Design for Non-Differentiable Implicit Models' by Lim et al.
+
+
+
+
+## References
+
+DAD
+
+iDAD
+
+Blau
+
+Asano
+
+Lim
+
+Huan & Marzouk 2016
+
+Shen et al. 2021
+
+Doshi-Velez & Konidaris (2016)
+
+SGBOED
+
+Moffat 2020 predator prey

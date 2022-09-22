@@ -6,7 +6,7 @@ categories: papers
 external_url: https://arxiv.org/abs/2207.05250
 external_site: arxiv.org
 authors: Desi R. Ivanova, Joel Jennings, Cheng Zhang, Adam Foster
-published: ICML2022 Workshop on Adaptive Experimental Design and Active Learning in the Real World
+published: ICML 2022 Workshop on Adaptive Experimental Design and Active Learning in the Real World
 thumbnail: assets/bed-context-optim-thumbnail.PNG
 tag: paper
 ---
