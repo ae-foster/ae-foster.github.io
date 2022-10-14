@@ -5,7 +5,7 @@ date:   2022-09-29
 categories: posts
 authors: Adam Foster
 published: Blog post
-thumbnail: assets/model-selection-thumb.png
+thumbnail: assets/rl-dad-thumb.png
 tag: post
 ---
 
