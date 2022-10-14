@@ -28,6 +28,8 @@ In the Bayesian formulation, we have a model with prior $$p(\theta)$$ and a like
 0. obtaining outcome $$y_t$$ by running an experiment with design $$\xi_t$$, 
 0. updating the posterior $$p(\theta\mid\xi_{1:t}, y_{i:t})$$.
 
+![DAD algorithm flow diagram]({{ site.url }}/assets/dad_alg.png){:class="model-select-img"}
+
 In DAD, the choice of $$\xi_t$$ is made by a neural network design policy $$\pi$$. This policy is trained by gradient descent to maximize a lower bound on the total expected information gain from the sequence of experiments $$h_T = (\xi_1,y_1),\dots,(\xi_T,y_T)$$. This lower bound is called sequential prior contrastive estimation (sPCE)
 
 $$
