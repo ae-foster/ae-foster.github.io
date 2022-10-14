@@ -10,7 +10,7 @@ tag: post
 ---
 
 This post follows up on a [previous one]({% post_url 2022-05-20-brl %}) which discussed the connection between Reinforcement Learning (RL) and [Deep Adaptive Design (DAD)](https://arxiv.org/abs/2103.02438). 
-Here, I am taking a deeper dive into three 2022 papers that build off of DAD and use RL to train policies for adaptive experimental design: [Blau et al.](https://arxiv.org/abs/2202.00821), [Asano](https://arxiv.org/abs/2202.07472) and [Lim et al.](https://arxiv.org/abs/2203.04272). 
+Here, I am taking a deeper dive into two 2022 papers that build off of DAD and use RL to train policies for adaptive experimental design: [Blau et al.](https://arxiv.org/abs/2202.00821) and [Lim et al.](https://arxiv.org/abs/2203.04272). 
 This is both a natural and interesting direction because training with RL removes some of the major limitations of DAD, such as struggling to handle non-differentiable models and discrete design spaces, and allows us to tap into advances in RL to optimise design policies.
 <!--more-->
 
@@ -45,8 +45,8 @@ In my [previous post]({% post_url 2022-05-20-brl %}), I discussed how the sequen
 When I wrote that in Autumn 2021, this connection hadn't been used practically to train design policies.
 In February-March 2022, new papers hit arXiv using RL to train design policies.
 In this post I will talk about the details of those papers. 
-I am specifically going to discuss the papers [Blau et al. (2022)](https://arxiv.org/abs/2202.00821), [Asano (2022)](https://arxiv.org/abs/2202.07472) and [Lim et al. (2022)](https://arxiv.org/abs/2203.04272) because these are the papers that most directly use ideas from DAD, and hence are closest to my own expertise. 
-I have therefore set aside important papers such as [Huan & Marzouk (2016)](https://arxiv.org/abs/1604.08320) and [Shen & Huan (2021)](https://arxiv.org/abs/2110.15335).
+I am specifically going to discuss the papers [Blau et al. (2022)](https://arxiv.org/abs/2202.00821) and [Lim et al. (2022)](https://arxiv.org/abs/2203.04272) because these are the papers that most directly use ideas from DAD, and hence are closest to my own expertise. 
+I have therefore set aside important papers such as [Huan & Marzouk (2016)](https://arxiv.org/abs/1604.08320) [Shen & Huan (2021)](https://arxiv.org/abs/2110.15335) and [Asano](https://arxiv.org/abs/2202.07472).
 For the papers I will tackle in this post, I want to pre-emptively apologise for any errors of understanding that I may make. 
 I have decided to cover the papers in the order that they were first on arXiv because, whilst a little arbitrary, this is also a logical order to go through them conceptually.
 
@@ -107,33 +107,9 @@ The results are very promising. I was curious how difficult training was. We hea
 I was glad to see this work published at ICML 2022!
 
 
-## 'Sequential Bayesian experimental designs via reinforcement learning' by Asano
-
-They are moving beyond permutation-invariant. For example, to incorporate constraints on $$\|\xi_t-\xi_{t-1}\|$$
-They make a distinction between actions and designs so that
-
-$$
-
-\xi_t = a_t + \xi_{t-1}
-
-$$
-
-Use terminal-only rewards
-
-SAC because it can handle discrete and continuous action spaces
-
-Stochastic policy again
-
-But are they setting up a proper MDP?????????
-
-This is a bit of riskier one. I am not sure they are doing things right. For example, what is the input to the policy. How are they applying DAD to death process?
-
-I shouldn't have jumped the gun and spoken to Takashi.
-
-
 ## 'Policy-Based Bayesian Experimental Design for Non-Differentiable Implicit Models' by Lim et al.
 
-This paper tackles a more challenging problem setting by incorporating some of the changes we examined in the [iDAD paper](https://arxiv.org/abs/2111.02329), namely
+This paper tackles a more challenging problem setting by incorporating some of the generalisations that we examined in the [iDAD paper](https://arxiv.org/abs/2111.02329), namely
 0. experiments are not assumed to be permutation invariant, as we replace the likelihood $$p(y\mid \theta,\xi)$$ with a history-dependent likelihood $$p(y\mid \theta,\xi_t,h_{t-1})$$,
 1. the likelihood is not assumed to be tractable, making this an implicit likelihood scenario.
 
@@ -156,10 +132,10 @@ $$
 
 This is actually quite a significant change from previous approach using sPCE.
 In Blau et al., the rewards based directly on sPCE do not have their own parameters: they are simple functions of $$\theta_{0:L}$$ and $$h_T$$.
-In contrast, the InfoNCE objective is a variational objective: it contains the learned parameter $$\psi$$ for the *critic* $$U_\psi$$. The reward only comes close to the true EIG when $$\psi$$ is optimised.
+In contrast, the InfoNCE objective is a variational objective: it contains the learned parameter $$\psi$$ for the *critic* $$U_\psi$$. The reward only comes close to the true EIG when $$\psi$$ is optimised. The critic $$U_\psi$$ that estimates an unnormalised joint density is quite distinct from any critic that might be involved in the RL algorithm (which could be confusing when using actor-critic algorithms).
 
 Similarly to Blau et al., Lim et al. point out that the most obvious way to apply the InfoNCE objective within RL would be to use terminal-only (i.e. sparse) rewards.
-Looking ahead to the experiments for a second, this sparse reward formulation appears to fail catastrophically when combined with InfoNCE.
+Looking ahead to the experiments for a second, this sparse reward formulation appears to fail catastrophically when combined with InfoNCE (Figure 1).
 Instead, a step-by-step reward is more effective. 
 The step-by-step (i.e. dense) rewards are defined similarly to Blau et al., but using InfoNCE instead of sPCE:
 
@@ -179,49 +155,53 @@ $$
 
 ### Training the policy and the critic
 
-I was particularly interested to get into the training details here. 
 Unlike in Blau et al., the implicit likelihood settings has this problem of having to learn the policy and the critic at the same time.
-This makes some sense when doing everything end-to-end with gradient descent. 
+When optimising everything end-to-end with gradient descent in iDAD, we interpreted this simply as gradient descent on an enlarged set of parameters. 
 When updating policy and critic with different algorithms (RL, gradient descent), I was concerned that something might go wrong.
-Algorithm 1 from Lim et al. suggests everything is peachy: the policy is updated using TD3 and critic is updated with some gradient steps, and we simply alternate.
+Algorithm 1 from Lim et al. suggests everything is fine: the policy is updated using TD3 and critic is updated with some gradient steps, and we simply alternate.
 
-There is a subtlety tucked away in the appendix: the critic is dealt with using a 'target network'.
+There is a subtlety tucked away in the appendix: the critic, $$U_\psi$$, is dealt with using a 'target network'.
 This is quite a standard idea in RL. The target network is essentially a lagged version of $$\psi$$ and this is used to give rewards to train the policy.
 This is expected to give better stability to the RL training.
-There seem to be some interesting research questions here: how do we deal with an RL problem where we need to learn the rewards simultaneously with the policy?
+Overall, I felt that this paper has only begun to stratch the surface of an interesting question that is clearly relevant to experimental design: how do we learn the reward at the same time as the policy?
 
-In Lim et al., the choice of RL algorithm was TD3. As with the other paper, I was left a little mystified about why exactly this algorithm was picked.
+In Lim et al., the choice of RL algorithm was TD3. As with the other paper, I was left a little mystified about why exactly this algorithm was chosen.
 Also like Blau et al., the policy is stochastic through the addition of some Gaussian noise to encourage exploration.
 
 Finally, the authors mentioned that using an encoding of the history as an input to the policy (either a permutation-invariant attention-based encoding, or a LSTM encoding) is not as effective as simply concatenating the whole history and padding unseen experiments with zeros.
 This is something we actually tried out during the iDAD project, but didn't find it to be particularly effective. Perhaps the encoder networks here were too weak and acted as a bottleneck. 
 Using the concatenation approach cuts out a piece of complexity and lets the policy and Q-network do the work themselves.
 
-## Experiments
+### Experiments
 
-We've seen the same experiment twice, so why isn't it working here?
+First, the authors looked at the Location Finding model, but unlike Blau et al., they treated this as an implicit likelihood model by denying themselved access to the likelihood when training. As expected, this is a more difficult problem. In particular, whilst Blau et al. reported that they could outperform DAD using RL, Lim et al. are not able to get past DAD. It seemed like RL-DAD could be doing better than iDAD, but it was confusing to see *only* the sNMC upper bounds in Table 1, usually we present both upper and lower bounds on total EIG. Figure 1 drives home the point that sparse rewards really do not work for RL when we are also learning $$U_\psi$$. For the Susceptible-Infected-Recovered (SIR) model that was studied in iDAD, the RL-DAD approach appears to have comparable but no better performance than iDAD.
+
+I was most interested by the Cartpole experiment. [Cartpole](https://gsurma.medium.com/cartpole-introduction-to-reinforcement-learning-ed0eb5b58288) is an environment that is more often seen in RL papers. It is a simulator of a physical system in which a pole is attached at one end to a freely sliding cart. Typically, the RL agent has to learn how to balance the pole. But it can also be interpreted as an experimental design problem in which the cart is manipulated to uncover the unknown physical parameters of the system: the mass $$m$ of the cart and the coefficient of friction $$\mu$$ between the cart and the pole. By using a *non-differentiable* RL Gym implementation of this environment, we have a genuine non-differentiable simulator without a known likelihood. Here, RL-DAD does well and does substantially better than the most realistic alternative algorithm which is MINEBED-BO.
+
+
+
+## Conclusions
+
 
 
 
 
 ## References
 
-DAD
+Adam Foster, Desi R Ivanova, Ilyas Malik and Tom Rainforth. Deep Adaptive Design: Amortizing Sequential Bayesian Experimental Design. In Proceedings of the 38th International Conference on Machine Learning, pages 3384-3395. PMLR, 2021.
 
-iDAD
+Ivanova, D. R., Foster, A., Kleinegesse, S., Gutmann, M. U., & Rainforth, T. (2021). Implicit deep adaptive design: policy-based experimental design without likelihoods. Advances in Neural Information Processing Systems, 34, 25785-25798.
 
-Blau
+Blau, T., Bonilla, E. V., Chades, I., & Dezfouli, A. (2022, June). Optimizing Sequential Experimental Design with Deep Reinforcement Learning. In International Conference on Machine Learning (pp. 2107-2128). PMLR.
 
-Asano
+Lim, V., Novoseller, E., Ichnowski, J., Huang, H., & Goldberg, K. (2022). Policy-Based Bayesian Experimental Design for Non-Differentiable Implicit Models. arXiv preprint arXiv:2203.04272.
 
-Lim
+Asano, H. (2022). Sequential Bayesian experimental designs via reinforcement learning. arXiv preprint arXiv:2202.07472.
 
-Huan & Marzouk 2016
+Xun Huan and Youssef M Marzouk. Sequential bayesian optimal experimental design via approximate dynamic programming. arXiv preprint arXiv:1604.08320, 2016.
 
-Shen et al. 2021
+Shen, W., & Huan, X. (2021). Bayesian sequential optimal experimental design for nonlinear models using policy gradient reinforcement learning. arXiv preprint arXiv:2110.15335.
 
-Doshi-Velez & Konidaris (2016)
+Doshi-Velez, F., & Konidaris, G. (2016, July). Hidden parameter markov decision processes: A semiparametric regression approach for discovering latent task parametrizations. In IJCAI: proceedings of the conference (Vol. 2016, p. 1432). NIH Public Access.
 
-SGBOED
-
-Moffat 2020 predator prey
+Moffat, H., Hainy, M., Papanikolaou, N. E., & Drovandi, C. (2020). Sequential experimental design for predator–prey functional response experiments. Journal of the Royal Society Interface, 17(166), 20200156.
