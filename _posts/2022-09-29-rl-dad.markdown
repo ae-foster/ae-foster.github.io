@@ -134,7 +134,9 @@ $$
 
 This is actually quite a significant change from previous approach using sPCE.
 In Blau et al., the rewards based directly on sPCE do not have their own parameters: they are simple functions of $$\theta_{0:L}$$ and $$h_T$$.
-In contrast, the InfoNCE objective is a variational objective: it contains the learned parameter $$\psi$$ for the *critic* $$U_\psi$$. The reward only comes close to the true EIG when $$\psi$$ is optimised. The critic $$U_\psi$$ that estimates an unnormalised joint density is quite distinct from any critic that might be involved in the RL algorithm (which could be confusing when using actor-critic algorithms).
+In contrast, the InfoNCE objective is a variational objective: it contains the learned parameter $$\psi$$ for the *critic* $$U_\psi$$. The reward only comes close to the true EIG when $$\psi$$ is optimised. The critic $$U_\psi$$ that estimates an unnormalised joint density is quite distinct from any critic that might be involved in the RL algorithm (which could be confusing when using actor-critic algorithms). The critic can also be used to estimate the posterior on $$\theta$$ at the end of the experiment.
+
+![iDAD algorithm flow diagram]({{ site.url }}/assets/idad-alg.png){:class="model-select-img"}
 
 Similarly to Blau et al., Lim et al. point out that the most obvious way to apply the InfoNCE objective within RL would be to use terminal-only (i.e. sparse) rewards.
 Looking ahead to the experiments for a second, this sparse reward formulation appears to fail catastrophically when combined with InfoNCE (Figure 1).
