@@ -42,17 +42,17 @@ $$
 
 $$
 
-The policy network is designed to account for the permutation invariance of experimental histories: these are represented using a permutation invariant neural representation. This was an innovation compared to earlier work, which explicitly computed the posterior $$p(\theta\mid\xi_{1:t},y_{1:t})$$ at each step. The policy is updated by gradient descent on the policy parameters. Typically, this is by naive backprop, which is valid for reparametrisable likelihoods. The alternative is to use a score function gradient estimator, for example this is necessary for discrete $$y$$.
+The policy network is designed to account for the permutation invariance of experimental histories: these are represented using a permutation invariant neural representation. This was an innovation compared to earlier work, which explicitly computed the posterior $$p(\theta\mid\xi_{1:t},y_{1:t})$$ at each step. The policy is updated by gradient descent on the policy parameters. Typically, this is by naive backprop, which is valid for reparametrisable likelihoods. The alternative is to use a score function gradient estimator; this is necessary, for example, when $$y$$ is discrete.
 
 
 ## New direction: using RL to train the design policy
 
 In my [previous post]({% post_url 2022-05-20-brl %}), I discussed how the sequential experimental design problem can naturally be cast as Bayes Adaptive Markov Decision Process.
-When I wrote that in Autumn 2021, this connection hadn't been used practically to train design policies.
+Back then, this connection hadn't been used practically to train design policies.
 In February-March 2022, new papers hit arXiv using RL to train design policies.
 In this post I will talk about the details of those papers. 
-I am specifically going to discuss the papers [Blau et al. (2022)](https://arxiv.org/abs/2202.00821) and [Lim et al. (2022)](https://arxiv.org/abs/2203.04272) because these are the papers that most directly use ideas from DAD, and hence are closest to my own expertise. 
-I have therefore set aside important papers such as [Huan & Marzouk (2016)](https://arxiv.org/abs/1604.08320) [Shen & Huan (2021)](https://arxiv.org/abs/2110.15335) and [Asano](https://arxiv.org/abs/2202.07472).
+I am specifically going to discuss the papers [Blau et al. (2022)](https://arxiv.org/abs/2202.00821) and [Lim et al. (2022)],(https://arxiv.org/abs/2203.04272) because these are the papers that most directly use ideas from DAD, and hence are closest to my own expertise. 
+I have therefore set aside important papers such as [Huan & Marzouk (2016)](https://arxiv.org/abs/1604.08320), [Shen & Huan (2021)](https://arxiv.org/abs/2110.15335) and [Asano](https://arxiv.org/abs/2202.07472).
 For the papers I will tackle in this post, I want to pre-emptively apologise for any errors of understanding that I may make. 
 I have decided to cover the papers in the order that they were first on arXiv because, whilst a little arbitrary, this is also a logical order to go through them conceptually.
 
@@ -60,11 +60,12 @@ I have decided to cover the papers in the order that they were first on arXiv be
 
 This paper kicks off by formulating the adaptive experimental design problem in the language of RL.
 Blau et al. formulate the problem as a [Hidden Parameter MDP (HiP-MDP)](https://arxiv.org/abs/1308.3513).
+The HiP-MDP is an extension of the MDP in which different RL tasks are encoded by different values of a latent variable $$\theta$$. The transition function and reward function can then depend on $$\theta$$. A HiP-MDP is therefore an MDP *once we condition upon the value of $$\theta$$*.
 The HiP-MDP is a nice formulation I hadn't seen before that seems almost custom-made for the sequential experimental design problem. 
-In this set-up, the states are histories $$h_t$$, the actions are designs $$\xi_t$$, the hidden parameters are $$\theta_{0:L}$$ and the transition function is the likelihood $$p(y\mid \theta_0,\xi)$$.
+In this set-up, the states are histories $$h_t$$, the actions are designs $$\xi_t$$, the hidden parameters are $$\theta_{0:L}$$ and the transition function is the likelihood $$p(y\mid \theta_0,\xi)$$. The policy $$\pi$$ operates on the history states $$\xi_{t+1} = \pi(h_t)$$.
 
 Exactly formulating the problem in the language of RL is a slightly finicky exercise!
-For instance, the sequence $$(\xi_1,y_1),(\xi_2,y_2),\dots$$ is not Markovian; the sequence $$h_1,h_2,\dots$$ *is* Markovian, but to evaluate the sPCE objective you also need access to $$\theta_{0:L}$$, so should these form part of the state or part of a stochastic reward? I previously described the adaptive experimental design problem as a BAMDP; it's also possible to describe it as a pure MDP with an extended state space. I like the HiP-MDP as it's perhaps the cleanest.
+For instance, the sequence $$(\xi_1,y_1),(\xi_2,y_2),\dots$$ is not Markovian; the sequence $$h_1,h_2,\dots$$ *is* Markovian, but to evaluate the sPCE objective you also need access to $$\theta_{0:L}$$, so should these form part of the state or part of a stochastic reward? I previously described the adaptive experimental design problem as a BAMDP; it's also possible to describe it as a pure MDP with an extended state space. I like the HiP-MDP as it seems to most naturally match the experimental design set-up.
 
 
 ### State representation and reward
@@ -98,7 +99,7 @@ They compare experimentally to the terminal-only reward, and show that step-by-s
 In Blau et al., the design policy is stochastic. As the authors say, exploration is certainly necessary for RL and modern RL algorithms incorporate many tricks to enable good exploration. Incorporating exploration can avoid the policy becoming trapped in local optima. It remains an open question (at least for me) whether a stochastic policy would also be beneficial for the original DAD formulation using stochastic gradient optimisation. Whilst adding explicit exploration is the norm in RL, it certainly is not the norm when optimising with stochastic gradient descent, even when we know the objective is not convex. 
 
 #### Choice of RL algorithm
-This was a part that I was interested to read, simply because I don’t know RL well enough to know what kind of algorithm would be appropriate for adaptive experimental design problem. The authors went with Randomized Ensembled Double Q-learning (REDQ), but didn’t dig much into the choice. I’m still a bit in the dark about whether this is a particularly good algorithm to have chosen. 
+The authors went with Randomized Ensembled Double Q-learning (REDQ) as their RL algorithm of choice, but didn’t dig much into the choice. I’m still a bit in the dark about whether this is a particularly good algorithm to have chosen. 
 
 ### Experiments
 
@@ -109,7 +110,7 @@ The models they picked to look at were
 2. Predator-prey model which was [previously tackled with an SMC approach](https://royalsocietypublishing.org/doi/full/10.1098/rsif.2020.0156). Interestingly, adaptive RL-based optimisation doesn’t do any better here than myopic design using SMC. Theoretically, it has been proved that when $$\theta$$ consists of all the parameters of the model, then the greedy strategy achieves a reward at least $$(1-e)R^*$$ where $$R^*$$ is the reward of the best non-greedy strategy. But, for adaptive experiments, this relies on the ability to compute intermediate posterior distributions accurately. My hunch is that SMC is a good practical choice here because the posteriors on 2D $$\theta$$ are quite easy to approximate. The authors also suggest that the state representations could be to blame. This could be tested empirically by increasing the representation dimension, increasing the encoder network size or using extra tricks like self-attention.
 
 ### Summing up
-The results are very promising. I was curious how difficult training was. We hear colloquially that deep RL is 'very hard to train', but it's unclear to me at least whether this refers exclusively to extremely high-dimensional problems.
+The results are very promising. I was curious how difficult training was, as folklore tells us that deep RL is 'very hard to train'.
 I was glad to see this work published at ICML 2022!
 
 
@@ -138,12 +139,12 @@ $$
 
 This is actually quite a significant change from previous approach using sPCE.
 In Blau et al., the rewards based directly on sPCE do not have their own parameters: they are simple functions of $$\theta_{0:L}$$ and $$h_T$$.
-In contrast, the InfoNCE objective is a variational objective: it contains the learned parameter $$\psi$$ for the *critic* $$U_\psi$$. The reward only comes close to the true EIG when $$\psi$$ is optimised. The critic $$U_\psi$$ that estimates an unnormalised joint density is quite distinct from any critic that might be involved in the RL algorithm (which could be confusing when using actor-critic algorithms). The critic can also be used to estimate the posterior on $$\theta$$ at the end of the experiment.
+In contrast, the InfoNCE objective is a variational objective: it contains the learned parameter $$\psi$$ for the *critic* $$U_\psi$$. The reward only comes close to the true EIG when $$\psi$$ is optimised. The critic can also be used to estimate the posterior on $$\theta$$ at the end of the experiment.
 
-![iDAD algorithm flow diagram]({{ site.url }}/assets/idad-alg.png){:class="alg-img"}
+*Note*: The critic $$U_\psi$$ that estimates an unnormalised joint density is quite distinct from any critic that might be involved in the RL algorithm (which could be confusing when using actor-critic algorithms).
 
 Similarly to Blau et al., Lim et al. point out that the most obvious way to apply the InfoNCE objective within RL would be to use terminal-only (i.e. sparse) rewards.
-Looking ahead to the experiments for a second, this sparse reward formulation appears to fail catastrophically when combined with InfoNCE (Figure 1).
+Looking ahead to the experiments for a second, this sparse reward formulation appears to fail catastrophically when combined with InfoNCE (Figure 1 in the paper).
 Instead, a step-by-step reward is more effective. 
 The step-by-step (i.e. dense) rewards are defined similarly to Blau et al., but using InfoNCE instead of sPCE:
 
@@ -182,18 +183,18 @@ Using the concatenation approach cuts out a piece of complexity and lets the pol
 
 ### Experiments
 
-First, the authors looked at the Location Finding model, but unlike Blau et al., they treated this as an implicit likelihood model by denying themselved access to the likelihood when training. As expected, this is a more difficult problem. In particular, whilst Blau et al. reported that they could outperform DAD using RL, Lim et al. are not able to get past DAD. It seemed like RL-DAD could be doing better than iDAD, but it was confusing to see *only* the sNMC upper bounds in Table 1, usually we present both upper and lower bounds on total EIG. Figure 1 drives home the point that sparse rewards really do not work for RL when we are also learning $$U_\psi$$. For the Susceptible-Infected-Recovered (SIR) model that was studied in iDAD, the RL-DAD approach appears to have comparable but no better performance than iDAD.
+First, the authors looked at the Location Finding model, but unlike Blau et al., they treated this as an implicit likelihood model by denying themselves access to the likelihood when training. As expected, this is a more difficult problem. In particular, whilst Blau et al. reported that they could outperform DAD using RL, Lim et al. are not able to get past DAD. It seemed like RL-DAD could be doing better than iDAD. (It was not typical to see *only* the sNMC upper bounds in Table 1, usually we present both upper and lower bounds on total EIG which can give more definite conclusions.) Figure 1 drives home the point that sparse rewards really do not work for RL when we are also learning $$U_\psi$$. For the Susceptible-Infected-Recovered (SIR) model that was studied in iDAD, the RL-DAD approach appears to have comparable but no better performance than iDAD.
 
-I was most interested by the Cartpole experiment. [Cartpole](https://gsurma.medium.com/cartpole-introduction-to-reinforcement-learning-ed0eb5b58288) is an environment that is more often seen in RL papers. It is a simulator of a physical system in which a pole is attached at one end to a freely sliding cart. Typically, the RL agent has to [learn how to balance the pole](https://www.youtube.com/watch?v=tvZLvJQ_qDk). But it can also be interpreted as an experimental design problem in which the cart is manipulated to uncover the unknown physical parameters of the system: the mass $$m$ of the cart and the coefficient of friction $$\mu$$ between the cart and the pole. By using a *non-differentiable* RL Gym implementation of this environment, we have a genuine non-differentiable simulator without a known likelihood. Here, RL-DAD does well and does substantially better than the most realistic alternative algorithm which is MINEBED-BO.
+I was most interested by the Cartpole experiment. [Cartpole](https://gsurma.medium.com/cartpole-introduction-to-reinforcement-learning-ed0eb5b58288) is an environment that is more often seen in RL papers. It is a simulator of a physical system in which a pole is attached at one end to a freely sliding cart. Typically, the RL agent has to [learn how to keep the pole balanced above the cart](https://www.youtube.com/watch?v=tvZLvJQ_qDk). But it can also be interpreted as an experimental design problem in which the cart is manipulated to uncover the unknown physical parameters of the system: the mass $$m$$ of the cart and the coefficient of friction $$\mu$$ between the cart and the pole. By using a *non-differentiable* RL Gym implementation of this environment, we have a genuine non-differentiable simulator without a known likelihood. Here, RL-DAD does well and does substantially better than the most realistic alternative algorithm, which is MINEBED-BO.
 
 
 ## Conclusions
 
-We have seen, in short, that plugging RL algorithms into the DAD framework is effective for training experimental design policies in both explicit and implicit likelihood settings.
+We have seen, in short, that using RL algorithms in the DAD/iDAD framework is effective for training experimental design policies in both explicit and implicit likelihood settings.
 
 Where might using RL be most useful? My hunch is that we can see these approaches being most useful for:
 0. Discrete design and mixed discrete-continuous design problems. RL is well-optimised for environments where there are a small number of discrete actions available at each step. Many experimental design problems naturally incorporate discrete decisions, e.g. in [experimental design for causal discovery](https://arxiv.org/abs/2203.02016). Another very natural area to consider is pool-based active learning. This is a well-studied experimental design problem with discrete actions; the issue here is that the design space is very large (perhaps tens of thousands of unlabeled examples in the pool), so it isn't clear if RL would be a sensible choice here, or indeed if non-greedy experimental design can be expected to have an edge over the usual greedy strategy.
-1. Long experiments. We haven't yet properly explored adaptive experiments with hundreds of adaptive steps. It is likely that the standard gradient-based training will degrade for very long experiments. Unfortunately, both the sPCE and InfoNCE objectives will also degrade here, so RL is only one piece of the solution. One idea that has sadly been relegated to appendices is to draw contrastive samples, not from the prior, but from a learned proposal distribution- this gives rise to the sACE and sLACE bounds (see DAD: Appendix B, iDAD: Appendix B). When using these bounds, there is yet another component - the proposal -  that must be jointly trained along with everything else. Digging deeper into the problem of interleaving RL updates with other updates to learn the reward might be necessary in this case.
+1. Long experiments. We haven't yet properly explored adaptive experiments with hundreds of adaptive steps. It is likely that the standard gradient-based training will degrade for very long experiments. Unfortunately, both the sPCE and InfoNCE objectives will also degrade here, so RL is only one piece of a possible solution. One idea is to draw contrastive samples, not from the prior, but from a learned proposal distribution- this gives rise to the sACE and sLACE bounds (see DAD: Appendix B, iDAD: Appendix B). When using these bounds, there is yet another component - the proposal -  that must be jointly trained along with everything else. Digging deeper into the problem of interleaving RL updates with other updates to learn the proposal seems relevant in this case.
 
 Finally, there is the question of where policy-based experimental design algorithms are most important in general. This is one reason I found the cartpole environment interesting: it represents a dynamically evolving environment that cannot be "paused" once experimentation begins and therefore requires very rapid design decisions.
 
