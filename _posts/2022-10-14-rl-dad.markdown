@@ -28,9 +28,13 @@ In the Bayesian formulation, we have a model with prior $$p(\theta)$$ and a like
 0. obtaining outcome $$y_t$$ by running an experiment with design $$\xi_t$$, 
 0. updating the posterior $$p(\theta\mid\xi_{1:t}, y_{i:t})$$.
 
-![DAD algorithm flow diagram]({{ site.url }}/assets/dad_alg.png){:class="model-select-img"}
 
-In DAD, the choice of $$\xi_t$$ is made by a neural network design policy $$\pi$$. This policy is trained by gradient descent to maximize a lower bound on the total expected information gain from the sequence of experiments $$h_T = (\xi_1,y_1),\dots,(\xi_T,y_T)$$. This lower bound is called sequential prior contrastive estimation (sPCE)
+
+In DAD, the choice of $$\xi_t$$ is made by a neural network design policy $$\pi$$.
+
+![DAD algorithm flow diagram]({{ site.url }}/assets/dad_alg.png){:class="alg-img"}
+
+This DAD policy is trained by gradient descent to maximize a lower bound on the total expected information gain from the sequence of experiments $$h_T = (\xi_1,y_1),\dots,(\xi_T,y_T)$$. This lower bound is called sequential prior contrastive estimation (sPCE)
 
 $$
 
@@ -136,7 +140,7 @@ This is actually quite a significant change from previous approach using sPCE.
 In Blau et al., the rewards based directly on sPCE do not have their own parameters: they are simple functions of $$\theta_{0:L}$$ and $$h_T$$.
 In contrast, the InfoNCE objective is a variational objective: it contains the learned parameter $$\psi$$ for the *critic* $$U_\psi$$. The reward only comes close to the true EIG when $$\psi$$ is optimised. The critic $$U_\psi$$ that estimates an unnormalised joint density is quite distinct from any critic that might be involved in the RL algorithm (which could be confusing when using actor-critic algorithms). The critic can also be used to estimate the posterior on $$\theta$$ at the end of the experiment.
 
-![iDAD algorithm flow diagram]({{ site.url }}/assets/idad-alg.png){:class="model-select-img"}
+![iDAD algorithm flow diagram]({{ site.url }}/assets/idad-alg.png){:class="alg-img"}
 
 Similarly to Blau et al., Lim et al. point out that the most obvious way to apply the InfoNCE objective within RL would be to use terminal-only (i.e. sparse) rewards.
 Looking ahead to the experiments for a second, this sparse reward formulation appears to fail catastrophically when combined with InfoNCE (Figure 1).
