@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Optimising adaptive experimental designs with RL"
-date:   2022-09-29
+date:   2022-10-14
 categories: posts
 authors: Adam Foster
 published: Blog post
