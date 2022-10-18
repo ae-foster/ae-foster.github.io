@@ -131,7 +131,7 @@ $$
 
 Here is a visualisation of DAD applied to this problem 
 
-![DAD applied to source location problem]({{ site.url }}/assets/dad-animation.png){:class="alg-img"}
+![DAD applied to source location problem]({{ site.url }}/assets/dad-animation.gif){:class="alg-img"}
 
 In Blau et al., they compare the new RL approach against DAD, showing that RL has a decent edge for this problem with a time horizon $$T=30$$.
 (It would be great to see a comparable animation for the RL policy to see whether it has an qualititative differences.)
@@ -157,6 +157,7 @@ $$
 $$
 
 where $$\theta = (a, T_h)$$ are the model parameters that have to be learned.
+The design $$\xi$$ is the initial prey population, and the observation $$y$$ is the number of prey remaining at some time $$\mathcal{T}$$. This is sampled from a binomial distribution with probability $$N_\mathcal{T} / \xi$$.
 
 Interestingly, adaptive RL-based optimisation doesn’t do any better here than myopic design using SMC. For adaptive experiments, the success of the greedy strategy can depend on the ability to compute intermediate posterior distributions accurately. My hunch is that SMC is a good practical choice here because the posteriors on 2-dimensional $$\theta$$ are quite easy to approximate. The authors also suggest that the state representations could be to blame. This could be tested empirically by increasing the representation dimension, increasing the encoder network size or using extra tricks like self-attention.
 
