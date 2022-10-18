@@ -175,9 +175,10 @@ This paper tackles a more challenging problem setting by incorporating some of t
 However, unlike iDAD, Lim et al. also assume that the simulator that creates samples from $$p(y\mid \theta,\xi_t,h_{t-1})$$ is not differentiable. This differentiability was a key assumption in iDAD that enabled gradient-based optimisation of the design policy.
 
 Initially, the authors set up the problem in the language of RL, choosing this time to formulate the problem as a Partially Observed MDP (POMDP).
-There is an important point here that breaking the permutation invariance of experiments does not fundamentally alter the structure provided the additional dependence is only on the observed history $$h_{t-1}$$.
-We have now seen the sequential experimental design problem formulated as a BAMDP, HiP-MDP and a POMDP. 
-I don't think the distinction between these is important: the proofs are all roughly the same.
+The set-up is similar to what we have seen already with Blau et al., except that $$\theta_{0:L}$$ now forms part of the partially observed state.
+There is an important point here that breaking the permutation invariance of experiments does not fundamentally alter the Markovian structure provided the additional dependence of $$p(y\mid \theta,\xi_t,h_{t-1})$ is only on the observed history $$h_{t-1}$$.
+(We have now seen the sequential experimental design problem formulated as a BAMDP, HiP-MDP and a POMDP. 
+I don't think the distinction between these is important: the proofs are all roughly the same.)
 
 ### Rewards with implicit likelihood
 
@@ -210,13 +211,13 @@ where
 
 $$
 
-g_{L,\psi}(h_t,\theta_{0:L}) = \log \left[ \frac{\exp(U_\psi(h_t,\theta_0))}{\frac{1}{L+1} \sum_{\ell=0}^L \exp(U_\psi(h_t,\theta_\ell)) } \right] 
+g_{L,\psi}(h_t,\theta_{0:L}) = \log \left[ \frac{\exp(U_\psi(h_t,\theta_0))}{\frac{1}{L+1} \sum_{\ell=0}^L \exp(U_\psi(h_t,\theta_\ell)) } \right] .
 
 $$
 
 ### Training the policy and the critic
 
-Unlike in Blau et al., the implicit likelihood settings has this problem of having to learn the policy and the critic at the same time.
+Unlike in Blau et al., the implicit likelihood settings has this problem of having to learn the policy and the critic $$U_\psi$$ at the same time.
 When optimising everything end-to-end with gradient descent in iDAD, we interpreted this simply as gradient descent on an enlarged set of parameters. 
 When updating policy and critic with different algorithms (RL, gradient descent), I was concerned that something might go wrong.
 Algorithm 1 from Lim et al. suggests everything is fine: the policy is updated using TD3 and critic is updated with some gradient steps, and we simply alternate.
@@ -226,7 +227,7 @@ This is quite a standard idea in RL. The target network is essentially a lagged 
 This is expected to give better stability to the RL training.
 Overall, I felt that this paper has only begun to stratch the surface of an interesting question that is clearly relevant to experimental design: how do we learn the reward at the same time as the policy?
 
-In Lim et al., the choice of RL algorithm was TD3. As with the other paper, I was left a little mystified about why exactly this algorithm was chosen.
+In Lim et al., the choice of RL algorithm was TD3. This algorithm requires the training of the policy $\pi$ and a Q-network $Q_\omega$. As with the other paper, I was left a little mystified about why exactly this algorithm was chosen.
 Also like Blau et al., the policy is stochastic through the addition of some Gaussian noise to encourage exploration.
 
 Finally, the authors mentioned that using an encoding of the history as an input to the policy (either a permutation-invariant attention-based encoding, or a LSTM encoding) is not as effective as simply concatenating the whole history and padding unseen experiments with zeros.
@@ -242,7 +243,7 @@ I was most interested by the Cartpole experiment. [Cartpole](https://gsurma.medi
 
 ## Conclusions
 
-We have seen, in short, that using RL algorithms in the DAD/iDAD framework is effective for training experimental design policies in both explicit and implicit likelihood settings.
+These two papers demonstrate that using RL algorithms in the DAD/iDAD framework is effective for training experimental design policies in both explicit and implicit likelihood settings.
 
 Where might using RL be most useful? My hunch is that we can see these approaches being most useful for:
 0. Discrete design and mixed discrete-continuous design problems. RL is well-optimised for environments where there are a small number of discrete actions available at each step. Many experimental design problems naturally incorporate discrete decisions, e.g. in [experimental design for causal discovery](https://arxiv.org/abs/2203.02016). Another very natural area to consider is pool-based active learning. This is a well-studied experimental design problem with discrete actions; the issue here is that the design space is very large (perhaps tens of thousands of unlabeled examples in the pool), so it isn't clear if RL would be a sensible choice here, or indeed if non-greedy experimental design can be expected to have an edge over the usual greedy strategy.
