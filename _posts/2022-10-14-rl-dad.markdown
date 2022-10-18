@@ -253,20 +253,20 @@ Finally, there is the question of where policy-based experimental design algorit
 
 ## References
 
-Adam Foster, Desi R Ivanova, Ilyas Malik and Tom Rainforth. Deep Adaptive Design: Amortizing Sequential Bayesian Experimental Design. In Proceedings of the 38th International Conference on Machine Learning, pages 3384-3395. PMLR, 2021.
+Adam Foster, Desi R Ivanova, Ilyas Malik and Tom Rainforth (2021). Deep Adaptive Design: Amortizing Sequential Bayesian Experimental Design. In Proceedings of the 38th International Conference on Machine Learning, pages 3384-3395. PMLR.
 
 Ivanova, D. R., Foster, A., Kleinegesse, S., Gutmann, M. U., & Rainforth, T. (2021). Implicit deep adaptive design: policy-based experimental design without likelihoods. Advances in Neural Information Processing Systems, 34, 25785-25798.
 
-Blau, T., Bonilla, E. V., Chades, I., & Dezfouli, A. (2022, June). Optimizing Sequential Experimental Design with Deep Reinforcement Learning. In International Conference on Machine Learning (pp. 2107-2128). PMLR.
+Blau, T., Bonilla, E. V., Chades, I., & Dezfouli, A. (2022). Optimizing Sequential Experimental Design with Deep Reinforcement Learning. In International Conference on Machine Learning (pp. 2107-2128). PMLR.
 
 Lim, V., Novoseller, E., Ichnowski, J., Huang, H., & Goldberg, K. (2022). Policy-Based Bayesian Experimental Design for Non-Differentiable Implicit Models. arXiv preprint arXiv:2203.04272.
 
 Asano, H. (2022). Sequential Bayesian experimental designs via reinforcement learning. arXiv preprint arXiv:2202.07472.
 
-Xun Huan and Youssef M Marzouk. Sequential bayesian optimal experimental design via approximate dynamic programming. arXiv preprint arXiv:1604.08320, 2016.
+Xun Huan and Youssef M Marzouk (2016). Sequential bayesian optimal experimental design via approximate dynamic programming. arXiv preprint arXiv:1604.08320.
 
 Shen, W., & Huan, X. (2021). Bayesian sequential optimal experimental design for nonlinear models using policy gradient reinforcement learning. arXiv preprint arXiv:2110.15335.
 
-Doshi-Velez, F., & Konidaris, G. (2016, July). Hidden parameter markov decision processes: A semiparametric regression approach for discovering latent task parametrizations. In IJCAI: proceedings of the conference (Vol. 2016, p. 1432). NIH Public Access.
+Doshi-Velez, F., & Konidaris, G. (2016). Hidden parameter markov decision processes: A semiparametric regression approach for discovering latent task parametrizations. In IJCAI: proceedings of the conference (Vol. 2016, p. 1432). NIH Public Access.
 
 Moffat, H., Hainy, M., Papanikolaou, N. E., & Drovandi, C. (2020). Sequential experimental design for predator–prey functional response experiments. Journal of the Royal Society Interface, 17(166), 20200156.
