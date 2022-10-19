@@ -176,7 +176,7 @@ However, unlike iDAD, Lim et al. also assume that the simulator that creates sam
 
 Initially, the authors set up the problem in the language of RL, choosing this time to formulate the problem as a Partially Observed MDP (POMDP).
 The set-up is similar to what we have seen already with Blau et al., except that $$\theta_{0:L}$$ now forms part of the partially observed state.
-There is an important point here that breaking the permutation invariance of experiments does not fundamentally alter the Markovian structure provided the additional dependence of $$p(y\mid \theta,\xi_t,h_{t-1})$ is only on the observed history $$h_{t-1}$$.
+There is an important point here that breaking the permutation invariance of experiments does not fundamentally alter the Markovian structure provided the additional dependence of $$p(y\mid \theta,\xi_t,h_{t-1})$$ is only on the observed history $$h_{t-1}$$.
 (We have now seen the sequential experimental design problem formulated as a BAMDP, HiP-MDP and a POMDP. 
 I don't think the distinction between these is important: the proofs are all roughly the same.)
 
@@ -227,12 +227,14 @@ This is quite a standard idea in RL. The target network is essentially a lagged 
 This is expected to give better stability to the RL training.
 Overall, I felt that this paper has only begun to stratch the surface of an interesting question that is clearly relevant to experimental design: how do we learn the reward at the same time as the policy?
 
-In Lim et al., the choice of RL algorithm was TD3. This algorithm requires the training of the policy $\pi$ and a Q-network $Q_\omega$. As with the other paper, I was left a little mystified about why exactly this algorithm was chosen.
+In Lim et al., the choice of RL algorithm was TD3. This algorithm requires the training of the policy $$\pi$$ and a Q-network $$Q_\omega$$. As with the other paper, I was left a little mystified about why exactly this algorithm was chosen.
 Also like Blau et al., the policy is stochastic through the addition of some Gaussian noise to encourage exploration.
 
 Finally, the authors mentioned that using an encoding of the history as an input to the policy (either a permutation-invariant attention-based encoding, or a LSTM encoding) is not as effective as simply concatenating the whole history and padding unseen experiments with zeros.
-This is something we actually tried out during the iDAD project, but didn't find it to be particularly effective. Perhaps the encoder networks here were too weak and acted as a bottleneck. 
+This means that the state representation is of fixed dimension $$T(\text{dim}(y) + \text{dim}(\xi))$$, and the representation of $$h_t$$ with $$t<T$$ simply has zeros in the last $$(T-t)(\text{dim}(y) + \text{dim}(\xi))$$ positions.
+This is something we actually tried out during the iDAD project, but didn't find it to be particularly effective. Perhaps the encoder networks here were too weak and acted as a bottleneck.
 Using the concatenation approach cuts out a piece of complexity and lets the policy and Q-network do the work themselves.
+It's also possible that, once the permutation invariance is broken, the main gains from using a neural representation of the history are negated.
 
 ### Experiments
 
@@ -254,13 +256,13 @@ Finally, there is the question of where policy-based experimental design algorit
 
 ## References
 
-Adam Foster, Desi R Ivanova, Ilyas Malik and Tom Rainforth (2021). Deep Adaptive Design: Amortizing Sequential Bayesian Experimental Design. In Proceedings of the 38th International Conference on Machine Learning, pages 3384-3395. PMLR.
-
-Ivanova, D. R., Foster, A., Kleinegesse, S., Gutmann, M. U., & Rainforth, T. (2021). Implicit deep adaptive design: policy-based experimental design without likelihoods. Advances in Neural Information Processing Systems, 34, 25785-25798.
-
 Blau, T., Bonilla, E. V., Chades, I., & Dezfouli, A. (2022). Optimizing Sequential Experimental Design with Deep Reinforcement Learning. In International Conference on Machine Learning (pp. 2107-2128). PMLR.
 
 Lim, V., Novoseller, E., Ichnowski, J., Huang, H., & Goldberg, K. (2022). Policy-Based Bayesian Experimental Design for Non-Differentiable Implicit Models. arXiv preprint arXiv:2203.04272.
+
+Adam Foster, Desi R Ivanova, Ilyas Malik and Tom Rainforth (2021). Deep Adaptive Design: Amortizing Sequential Bayesian Experimental Design. In Proceedings of the 38th International Conference on Machine Learning, pages 3384-3395. PMLR.
+
+Ivanova, D. R., Foster, A., Kleinegesse, S., Gutmann, M. U., & Rainforth, T. (2021). Implicit deep adaptive design: policy-based experimental design without likelihoods. Advances in Neural Information Processing Systems, 34, 25785-25798.
 
 Asano, H. (2022). Sequential Bayesian experimental designs via reinforcement learning. arXiv preprint arXiv:2202.07472.
 
