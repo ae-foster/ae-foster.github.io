@@ -101,7 +101,7 @@ Of course, it is necessary to prove that using these rewards does lead to the co
 #### Explore-exploit
 In Blau et al., the design policy is stochastic, meaning that the design $$\xi_t$$ is sampled from a *distribution* $$p(\xi_t \mid \pi(h_{t-1}))$$. In Blau et al., the distribution is Gaussian when designs are continuous. As the authors say, exploration is important for RL and modern RL algorithms incorporate many tricks to enable good exploration. Incorporating exploration can avoid the policy becoming trapped in local optima. 
 
-It remains an open question (at least for me) whether a stochastic policy would also be beneficial for the original DAD formulation using stochastic gradient optimisation. Whilst adding explicit exploration is the norm in RL, it certainly is not the norm when optimising with stochastic gradient descent, even when we know the objective is not convex. 
+It remains an open question (at least for me) whether a stochastic policy would also be beneficial for the original DAD formulation using stochastic gradient optimisation. Whilst adding explicit exploration is the norm in RL, it certainly is not the norm when optimising with stochastic gradient descent, even when we know the objective is not convex. One reason for this is that, by using gradient methods, we can "see" policies in an infinitesimal neighbourhood of the current policy. We also know that the *optimal* policy is not stochastic (from Lindley, 1956), so this would only ever be a method for training a policy that is deterministic at the end.
 
 #### Choice of RL algorithm
 The authors went with Randomized Ensembled Double Q-learning (REDQ) as their RL algorithm of choice, but didn’t dig much into the choice. I’m still a bit in the dark about whether this is a particularly good algorithm to have chosen. 
@@ -269,6 +269,8 @@ Asano, H. (2022). Sequential Bayesian experimental designs via reinforcement lea
 Xun Huan and Youssef M Marzouk (2016). Sequential bayesian optimal experimental design via approximate dynamic programming. arXiv preprint arXiv:1604.08320.
 
 Shen, W., & Huan, X. (2021). Bayesian sequential optimal experimental design for nonlinear models using policy gradient reinforcement learning. arXiv preprint arXiv:2110.15335.
+
+Lindley, D. V. (1956). On a measure of the information provided by an experiment. The Annals of Mathematical Statistics, 27(4), 986-1005.
 
 Doshi-Velez, F., & Konidaris, G. (2016). Hidden parameter markov decision processes: A semiparametric regression approach for discovering latent task parametrizations. In IJCAI: proceedings of the conference (Vol. 2016, p. 1432). NIH Public Access.
 
