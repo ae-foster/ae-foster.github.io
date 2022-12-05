@@ -22,9 +22,7 @@ To use Bayesian experimental design in practice, we have developed [a range of t
 Since EIG is a mutual information, I am also interested in the intersection between information theory and machine learning.
 This led me to study contrastive representation learning and [the role of invariance in these methods](https://arxiv.org/abs/2010.09515), as well as [reproducing SimCLR in PyTorch](https://github.com/ae-foster/pytorch-simclr).
 
-[comment]: <> (Within the OxCSML group, I have been fortunate enough to be introduced to a wide range of new ideas in machine learning.
-We run a reading group on the role of symmetry and equivariance in deep learning.
-We have also read the latest research in reinforcement learning, deep generative models and metalearning, among other topics.)
+[comment]: <> (Within the OxCSML group, I have been fortunate enough to be introduced to a wide range of new ideas in machine learning. We run a reading group on the role of symmetry and equivariance in deep learning. We have also read the latest research in reinforcement learning, deep generative models and metalearning, among other topics.)
 
 [comment]: <> (I am currently searching for jobs!)
 
