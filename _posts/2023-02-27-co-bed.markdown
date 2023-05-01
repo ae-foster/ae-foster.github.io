@@ -1,0 +1,15 @@
+---
+layout: post
+title:  "CO-BED: Information-Theoretic Contextual Optimization via Bayesian Experimental Design"
+date:   2023-02-27
+categories: papers
+external_url: https://arxiv.org/abs/2302.14015
+external_site: arxiv.org
+authors: Desi R Ivanova, Joel Jennings, Tom Rainforth, Cheng Zhang, Adam Foster
+published: ICML 2023 (to appear)
+thumbnail: assets/co-bed-dag.png
+tag: paper
+---
+
+We formalize the problem of contextual optimization through the lens of Bayesian experimental design and propose CO-BED - a general, model-agnostic framework for designing contextual experiments using information-theoretic principles. After formulating a suitable information-based objective, we employ black-box variational methods to simultaneously estimate it and optimize the designs in a single stochastic gradient scheme. We further introduce a relaxation scheme to allow discrete actions to be accommodated. As a result, CO-BED provides a general and automated solution to a wide range of contextual optimization problems. We illustrate its effectiveness in a number of experiments, where CO-BED demonstrates competitive performance even when compared to bespoke, model-specific alternatives.
+<!--more-->
