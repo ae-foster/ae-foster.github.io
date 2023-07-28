@@ -1,0 +1,15 @@
+---
+layout: post
+title:  "Learning Instance-Specific Augmentations by Capturing Local Invariances"
+date:   2022-05-11
+categories: papers
+external_url: https://arxiv.org/abs/2206.00051
+external_site: arxiv.org
+authors: Ning Miao, Tom Rainforth, Emile Mathieu, Yann Dubois, Yee Whye Teh, Adam Foster, Hyunjik Kim
+published: ICML 2023
+thumbnail: assets/insta-aug-lemon.png
+tag: paper
+---
+
+We introduce InstaAug, a method for automatically learning input-specific augmentations from data. Previous methods for learning augmentations have typically assumed independence between the original input and the transformation applied to that input. This can be highly restrictive, as the invariances we hope our augmentation will capture are themselves often highly input dependent. InstaAug instead introduces a learnable invariance module that maps from inputs to tailored transformation parameters, allowing local invariances to be captured. This can be simultaneously trained alongside the downstream model in a fully end-to-end manner, or separately learned for a pre-trained model. We empirically demonstrate that InstaAug learns meaningful input-dependent augmentations for a wide range of transformation classes, which in turn provides better performance on both supervised and self-supervised tasks.
+<!--more-->
