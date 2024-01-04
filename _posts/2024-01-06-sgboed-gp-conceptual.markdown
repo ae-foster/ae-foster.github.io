@@ -230,27 +230,6 @@ This is something that could easily go wrong if you wrote your own implementatio
 It would of course be possible to redo this exercise in pure PyTorch.
 
 
-
-[//]: # (## Extending to adaptive experiments)
-
-[//]: # ()
-[//]: # (So far we have looked only at the SGBOED method. What about adaptive experimental design with DAD?)
-
-[//]: # (The same basic idea applies when computing the sPCE objective, we can replace all terms of the form $$p&#40;y_t|\xi_t,\theta_\ell&#41;$$ with $$p&#40;y_t|f_\ell&#40;\xi_t&#41;&#41;$$.)
-
-[//]: # (Coding this up is going to be a little harder though since the design $$\xi_t$$ depends on the past experimental history $$\xi_{1:t-1},y_{1:t-1}$$.)
-
-[//]: # (The algorithm would look something like this)
-
-[//]: # ()
-[//]: # (1. Compute $$\xi_1$$, sample $$f_\ell&#40;\xi_1&#41;$$ from the prior and $$y_1$$ conditional on $$f_0&#40;\xi_1&#41;$$. )
-
-[//]: # (2. Compute $$\xi_2$$ using $$\xi_1,y_1$$. Now sample $$f_\ell&#40;\xi_2&#41;$$ by conditioning on $$f_\ell&#40;\xi_2&#41;$$ and sample $$y_2$$ conditional on $$f_0&#40;\xi_2&#41;$$.)
-
-[//]: # (3. Repeat for $$t=3,\dots,T$$ conditioning the GP on $$f_\ell&#40;\xi_1&#41;,\dots,f_\ell&#40;\xi_{t-1}&#41;$$ when sampling $$f_\ell&#40;\xi_t&#41;$$.)
-
-
-
 ## References
 
 Adam Foster, Martin Jankowiak, Matthew O’Meara, Yee Whye Teh, and Tom Rainforth. A unified stochastic gradient approach to designing bayesian-optimal experiments. In International Conference on Artificial Intelligence and Statistics, pages 2959–2969. PMLR, 2020.
