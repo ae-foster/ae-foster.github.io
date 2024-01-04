@@ -38,23 +38,23 @@ In the SGBOED paper, we showed that the expectation of this term is a lower boun
 
 ## The problem with GP models
 
-In the parametric Bayesian model that we considered in the SGBOED paper, the *target of inference* is pretty clear. It is the
-set of all model parameters $$\theta$$ which is a finite dimensional vector with a prior that we can sample quite easily and
-explicitly. Once we introduce GPs into the mix, the *target of inference* needs to be more carefully specified.
+In the parametric Bayesian model that we considered in the SGBOED paper, the *target of inference* is the
+set of all model parameters $$\theta$$. This is a finite dimensional vector with a prior that we can sample quite easily and
+explicitly. Once we introduce GPs into the mix, the target of inference needs to be more carefully handled.
 
 To be concrete, let us begin with the simple regression model
 
 $$
 
-\begin{align}
+\begin{aligned}
 f &\sim \mathcal{GP}(0, k(\cdot, \cdot)) \\
 y | f,\xi &\sim N(f(\xi), \sigma^2)
-\end{align}
+\end{aligned}
 
 $$
 
 Now we have introduced the random function $$f$$, the GP kernel $$k$$ and a fixed and known observation variance $$\sigma^2$$.
-To begin with, let us also assume that the kernel function is fixed and known. 
+In this post, let us also assume that the kernel function is fixed and known. 
 In this case, the random function $$f$$ now plays the role of the $$\theta$$ in the earlier model.
 In particular, the target of inference is the unknown function $$f$$, which is infinite dimensional.
 Unlike in the parametric case, we cannot represent $$\theta$$ explicitly, so when we have $$\theta_{0:L} \sim p(\theta)$$,
@@ -76,10 +76,10 @@ we use the model
 
 $$
 
-\begin{align}
+\begin{aligned}
 f &\sim \mathcal{GP}(0, k(\cdot, \cdot)) \\
 y^{(b)} | f,\xi &\sim N(f(\xi^{(b)}), \sigma^2) \text{ independently over } b,
-\end{align}
+\end{aligned}
 
 $$
 
@@ -113,7 +113,7 @@ regression case).
 
 A runnable version of the code, plus installation instructions, is available in a [standalone repo](https://github.com/ae-foster/sgboed-gp).
 
-The code is based on the existing [DAD repo](https://github.com/ae-foster/dad).
+The code is based on the existing [DAD repo](https://github.com/ae-foster/dad) and is written using the Pyro probabilistic programming language.
 This repo already implements the PCE objective and the wrappers needed to get Pyro models working well with BOED.
 We can import these
 
@@ -221,16 +221,33 @@ For comparison, the predictive variance in the prior is 1.
 
 ![The final designs and the predictive variance surface]({{ site.url }}/assets/sgboed-gp/variance_heatmap.png){:class="wide-img"}
 
-## Extending to adaptive experiments
+### Costs and benefits of Pyro
 
-So far we have looked only at the SGBOED method. What about adaptive experimental design with DAD?
-The same basic idea applies when computing the sPCE objective, we can replace all terms of the form $$p(y_t|\xi_t,\theta_\ell)$$ with $$p(y_t|f_\ell(\xi_t))$$.
-Coding this up is going to be a little harder though since the design $$\xi_t$$ depends on the past experimental history $$\xi_{1:t-1},y_{1:t-1}$$.
-The algorithm would look something like this
+Pyro is a tricky language to get the hang of, partly because of the strict rules it imposes on tensor shapes (among other things).
+However, Pyro does provide some neat advantages. Firstly, you do not have to write a new implementation of the PCE objective
+for every new model. Secondly, the simulator and the likelihood model *must* be consistent by design. 
+This is something that could easily go wrong if you wrote your own implementation.
+It would of course be possible to redo this exercise in pure PyTorch.
 
-1. Compute $$\xi_1$$, sample $$f_\ell(\xi_1)$$ from the prior and $$y_1$$ conditional on $$f_0(\xi_1)$$. 
-2. Compute $$\xi_2$$ using $$\xi_1,y_1$$. Now sample $$f_\ell(\xi_2)$$ by conditioning on $$f_\ell(\xi_2)$$ and sample $$y_2$$ conditional on $$f_0(\xi_2)$$.
-3. Repeat for $$t=3,\dots,T$$ conditioning the GP on $$f_\ell(\xi_1),\dots,f_\ell(\xi_{t-1})$$ when sampling $$f_\ell(\xi_t)$$.
+
+
+[//]: # (## Extending to adaptive experiments)
+
+[//]: # ()
+[//]: # (So far we have looked only at the SGBOED method. What about adaptive experimental design with DAD?)
+
+[//]: # (The same basic idea applies when computing the sPCE objective, we can replace all terms of the form $$p&#40;y_t|\xi_t,\theta_\ell&#41;$$ with $$p&#40;y_t|f_\ell&#40;\xi_t&#41;&#41;$$.)
+
+[//]: # (Coding this up is going to be a little harder though since the design $$\xi_t$$ depends on the past experimental history $$\xi_{1:t-1},y_{1:t-1}$$.)
+
+[//]: # (The algorithm would look something like this)
+
+[//]: # ()
+[//]: # (1. Compute $$\xi_1$$, sample $$f_\ell&#40;\xi_1&#41;$$ from the prior and $$y_1$$ conditional on $$f_0&#40;\xi_1&#41;$$. )
+
+[//]: # (2. Compute $$\xi_2$$ using $$\xi_1,y_1$$. Now sample $$f_\ell&#40;\xi_2&#41;$$ by conditioning on $$f_\ell&#40;\xi_2&#41;$$ and sample $$y_2$$ conditional on $$f_0&#40;\xi_2&#41;$$.)
+
+[//]: # (3. Repeat for $$t=3,\dots,T$$ conditioning the GP on $$f_\ell&#40;\xi_1&#41;,\dots,f_\ell&#40;\xi_{t-1}&#41;$$ when sampling $$f_\ell&#40;\xi_t&#41;$$.)
 
 
 
