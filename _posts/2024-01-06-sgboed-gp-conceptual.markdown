@@ -9,13 +9,14 @@ thumbnail: assets/sgboed-gp/variance_heatmap_thumb.png
 tag: post
 ---
 
-I've been asked by a couple of people how [Gaussian Process (GP)](https://en.wikipedia.org/wiki/Gaussian_process) models can be incorporated into the framework
+A couple of people have asked me how [Gaussian Process (GP)](https://en.wikipedia.org/wiki/Gaussian_process) models can be incorporated into the framework
 of [Stochastic Gradient Bayesian Optimal Experimental Design (SGBOED)](https://arxiv.org/abs/1911.00294) and [Deep Adaptive Design (DAD)](https://arxiv.org/abs/2103.02438).
 Where a lot of older work on experimental design
 and particularly Bayesian optimisation *only* works for GP models, it seems *prima facie* that SGBOED does
-not work for GPs or any nonparametric Bayesian models. In this post, I'll show conceptually that SGBOED works with GPs including a [Pyro](http://pyro.ai/) example.
+not work for GPs or any nonparametric Bayesian models. In this post, I'll show conceptually that SGBOED works with GPs.
+There is also a [Pyro](http://pyro.ai/) code example.
 In a subsequent post
-I will look into more exotic models that incorporate GPs and other objective functions for learning designs.
+I will look into more exotic models that incorporate GPs, as well as adaptivity and other objective functions for learning designs.
 <!--more-->
 
 ## A quick recap on SGBOED
@@ -24,7 +25,7 @@ The SGBOED algorithm is a *gradient-based* approach to finding experimental desi
 gain (EIG) between the experimental data and the model's parameters. 
 Denote the model parameters $$\theta$$, the prior $$p(\theta)$$, design $$\xi$$, the experimental outcome $$y$$
 with likelihood model $$p(y\mid\theta,\xi)$$.
-The simplest objective function we proposed was the prior contrastive estimation (PCE) objective
+The simplest objective function we proposed, that should be maximised with respect to $$\xi$$, was the prior contrastive estimation (PCE) objective
 
 $$
 
@@ -34,7 +35,7 @@ $$
 
 where $$\theta_{0:L} \sim p(\theta)$$ and $$y \sim p(y\mid\theta_0,\xi)$$.
 
-In the SGBOED paper, we showed that the expectation of this term is a lower bound on the true EIG.
+In the SGBOED paper, we showed that the expectation of this quantity is a lower bound on the true EIG.
 
 ## The problem with GP models
 
@@ -48,7 +49,7 @@ $$
 
 \begin{aligned}
 f &\sim \mathcal{GP}(0, k(\cdot, \cdot)) \\
-y | f,\xi &\sim N(f(\xi), \sigma^2)
+y | f,\xi &\sim N(f(\xi), \sigma^2).
 \end{aligned}
 
 $$
@@ -57,7 +58,7 @@ Now we have introduced the random function $$f$$, the GP kernel $$k$$ and a fixe
 In this post, let us also assume that the kernel function is fixed and known. 
 In this case, the random function $$f$$ now plays the role of the $$\theta$$ in the earlier model.
 In particular, the target of inference is the unknown function $$f$$, which is infinite dimensional.
-Unlike in the parametric case, we cannot represent $$\theta$$ explicitly, so when we have $$\theta_{0:L} \sim p(\theta)$$,
+Unlike in the parametric case, we cannot represent $$\theta$$ explicitly, so where we have $$\theta_{0:L} \sim p(\theta)$$ in the SGBOED algorithm,
 what should be done in the GP case?
 
 Fortunately, the PCE objective only involves terms of the form $$p(y|\xi, \theta)$$ and $$y$$ only depends on $$f$$ through the 
@@ -66,7 +67,7 @@ Gaussians) and then evaluate the PCE objective as normal
 
 $$
 
-I_\textrm{PCE}(\xi) = \log \frac{p(y|f_0(\xi))}{\frac{1}{L+1} \sum_{\ell=0}^L p(y|f_\ell(\xi))}
+I_\textrm{PCE}(\xi) = \log \frac{p(y|f_0(\xi))}{\frac{1}{L+1} \sum_{\ell=0}^L p(y|f_\ell(\xi))}.
 
 $$
 
@@ -94,18 +95,19 @@ The purpose of this example is to plug a conceptual hole in the SGBOED theory.
 It has to come with a very hefty caveat: *you should never use SGBOED with a basic GP
 regression model in practice*.
 This is because the EIG, of which PCE is a sample-based lower bound, can simply be computed in closed form for this model. 
-If you're unfamiliar with how to derive this closed form, the idea (for the batch design case) is
+If you're unfamiliar with how to derive this closed form, the idea (for the batch design case) is to use $$\text{EIG} = H[p(y)] - \mathbb{E}[H[p(y\mid f)]]$$. Then we use the two following observations
 
 1. $$H[p(y\mid f)]$$ is a constant that we can ignore. If you want to evalute the exact MI, you can compute it using the fact $$y\mid f$$ are independent Gaussians of variance $$\sigma^2$$,
 1. $$H[p(y)]$$ is the entropy of a [Multivariate Gaussian](https://en.wikipedia.org/wiki/Multivariate_normal_distribution). The covariance matrix can be computed using $$\xi$$ and the kernel $$k$$ and the entropy can be evaluated using the formula.
 
-These formulas only hold for the basic model though; in later posts we will see more complex models where some kind of EIG estimation is necessary.
+These formulas only hold for the basic model though; in a later post we will see more complex models where some kind of EIG estimation is necessary.
 
 
 ### Bayesian Active Learning by Disagreement
 
 The observation that you can get at the EIG involving an infinite dimensional quantity, like a GP, by considering likelihoods 
 of the form $$p(y\mid f(\xi))$$ is one of the main ideas of the [original Bayesian Active Learning by Disagreement (BALD) paper](https://arxiv.org/abs/1112.5745).
+Indeed, the formula $$\text{EIG} = H[p(y)] - \mathbb{E}[H[p(y\mid f)]]$$ is often referred to as BALD.
 The BALD paper also has some neat stuff on EIGs for classification (which are not covered by an explicit formula like the 
 regression case).
 
@@ -124,7 +126,7 @@ from contrastive.mi import PriorContrastiveEstimation
 ```
 
 Now let's start writing a model. Our GP will be defined on the space $$(-1, 1)^2$$ and we will use a batch design,
-so $$\xi \in (-1, 1)^{2 \times B}$$ and $$y \in \mathbb{R}^B$$. We will use the RBF kernel.
+so $$\xi \in (-1, 1)^{2 \times B}$$ and $$y \in \mathbb{R}^B$$. We will use the RBF kernel $$k(\xi^{(b)}, \xi^{(b')}) = \exp\left(-\frac{1}{2 \ell ^ 2}\|\xi^{(b)} - \xi^{(b')}\|^2\right)$$ where $\ell$ is the lengthscale.
 
 ```python
 import torch
@@ -232,7 +234,6 @@ However, Pyro does provide some neat advantages. Firstly, you do not have to wri
 for every new model. Secondly, the simulator and the likelihood model *must* be consistent by design. 
 This is something that could easily go wrong if you wrote your own implementation.
 Of course, it would be possible to redo this exercise in pure PyTorch.
-
 
 ## References
 
