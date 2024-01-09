@@ -126,7 +126,7 @@ from contrastive.mi import PriorContrastiveEstimation
 ```
 
 Now let's start writing a model. Our GP will be defined on the space $$(-1, 1)^2$$ and we will use a batch design,
-so $$\xi \in (-1, 1)^{2 \times B}$$ and $$y \in \mathbb{R}^B$$. We will use the RBF kernel $$k(\xi^{(b)}, \xi^{(b')}) = \exp\left(-\frac{1}{2 \ell ^ 2}\|\xi^{(b)} - \xi^{(b')}\|^2\right)$$ where $\ell$ is the lengthscale.
+so $$\xi \in (-1, 1)^{2 \times B}$$ and $$y \in \mathbb{R}^B$$. We will use the RBF kernel $$k(\xi^{(b)}, \xi^{(b')}) = \exp\left(-\frac{1}{2 \ell ^ 2}\|\xi^{(b)} - \xi^{(b')}\|^2\right)$$ where $$\ell$$ is the lengthscale.
 
 ```python
 import torch
