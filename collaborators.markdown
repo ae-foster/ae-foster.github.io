@@ -7,6 +7,8 @@ order: 10
 
  - [Yee Whye Teh](https://www.stats.ox.ac.uk/~teh/index.html) (Oxford)
  - [Tom Rainforth](https://www.robots.ox.ac.uk/~twgr/) (Oxford)
+ - [Frank Noé](https://www.microsoft.com/en-us/research/people/franknoe/?lang=fr_ca) (Microsoft Research)
+ - [Jan Hermann](https://jan.hermann.name/) (Microsoft Research)
  - [Noah D. Goodman](http://cocolab.stanford.edu/ndg) (Stanford)
  - [Michael U. Gutmann](https://michaelgutmann.github.io/) (Edinburgh)
  - [Ben Bloem-Reddy](https://www.stat.ubc.ca/~benbr/) (UBC)
