@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Folx"
+title:  "Folx - Forward Laplacian for JAX"
 date:   2023-11-17
 categories: code
 external_url: https://github.com/microsoft/folx
@@ -9,5 +9,5 @@ external_site: github.com
 tag: code
 ---
 
-We wrote a Python module that implements the forward laplacian from [LapNet](https://arxiv.org/abs/2307.08214). It is implemented as a custom interpreter for Jaxprs.
+We (primarly Nick Gao!) wrote a Python module that implements the forward laplacian from [LapNet](https://arxiv.org/abs/2307.08214). It is implemented as a custom interpreter for Jaxprs.
 <!--more-->
