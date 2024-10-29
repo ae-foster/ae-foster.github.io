@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Concepts in Modern Bayesian Experimental Design"
+title:  "Concepts in Modern Bayesian Experimental Design (Corcoran Memorial Prize)"
 date:   2024-01-29
 categories: talks
 external_url: https://www.stats.ox.ac.uk/events/2022-corcoran-memorial-prize-lecture
