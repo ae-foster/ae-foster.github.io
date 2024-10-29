@@ -6,7 +6,7 @@ categories: papers
 external_url: https://arxiv.org/abs/2202.02195
 external_site: arxiv.org
 authors: Tomas Geffner, Javier Antoran, Adam Foster, Wenbo Gong, Chao Ma, Emre Kiciman, Amit Sharma, Angus Lamb, Martin Kukla, Nick Pawlowski, Miltiadis Allamanis, Cheng Zhang
-published: Preprint
+published: Transactions on Machine Learning Research
 thumbnail: assets/twonode.png
 tag: paper
 ---

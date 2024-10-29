@@ -6,7 +6,7 @@ categories: papers
 external_url: https://arxiv.org/abs/2302.14545
 external_site: arxiv.org
 authors: Tom Rainforth, Adam Foster, Desi R Ivanova, Freddie Bickford Smith
-published: Statistical Science (to appear)
+published: Statistical Science
 thumbnail: assets/idad.png
 tag: paper
 ---

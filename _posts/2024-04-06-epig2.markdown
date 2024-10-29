@@ -1,0 +1,14 @@
+---
+layout: post
+title:  "Making Better Use of Unlabelled Data in Bayesian Active Learning"
+date:   2024-04-06
+categories: papers
+external_url: https://proceedings.mlr.press/v238/bickford-smith24a/bickford-smith24a.pdf
+external_site: proceedings.mlr.press
+authors: Freddie Bickford Smith, Adam Foster, Tom Rainforth
+published: AISTATS 2024
+tag: paper
+---
+
+Fully supervised models are predominant in Bayesian active learning. We argue that their neglect of the information present in unlabelled data harms not just predictive performance but also decisions about what data to acquire. Our proposed solution is a simple framework for semi-supervised Bayesian active learning. We find it produces better-performing models than either conventional Bayesian active learning or semi-supervised learning with randomly acquired data. It is also easier to scale up than the conventional approach. As well as supporting a shift towards semi-supervised models, our findings highlight the importance of studying models and acquisition methods in conjunction.
+<!--more-->

@@ -1,0 +1,15 @@
+---
+layout: post
+title:  "Amortized Active Causal Induction with Deep Reinforcement Learning"
+date:   2024-05-26
+categories: papers
+external_url: https://arxiv.org/pdf/2405.16718
+external_site: arxiv.org
+authors: Freddie Bickford Smith, Andreas Kirsch, Sebastian Farquhar, Yarin Gal, Adam Foster, Tom Rainforth
+published: NeurIPS 2024 (to appear)
+thumbnail: assets/caasl.png
+tag: paper
+---
+
+We present Causal Amortized Active Structure Learning (CAASL), an active intervention design policy that can select interventions that are adaptive, real-time and that does not require access to the likelihood. This policy, an amortized network based on the transformer, is trained with reinforcement learning on a simulator of the design environment, and a reward function that measures how close the true causal graph is to a causal graph posterior inferred from the gathered data. On synthetic data and a single-cell gene expression simulator, we demonstrate empirically that the data acquired through our policy results in a better estimate of the underlying causal graph than alternative strategies. Our design policy successfully achieves amortized intervention design on the distribution of the training environment while also generalizing well to distribution shifts in test-time design environments. Further, our policy also demonstrates excellent zero-shot generalization to design environments with dimensionality higher than that during training, and to intervention types that it has not been trained on.
+<!--more-->

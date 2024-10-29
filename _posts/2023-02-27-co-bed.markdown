@@ -6,7 +6,7 @@ categories: papers
 external_url: https://arxiv.org/abs/2302.14015
 external_site: arxiv.org
 authors: Desi R Ivanova, Joel Jennings, Tom Rainforth, Cheng Zhang, Adam Foster
-published: ICML 2023 (to appear)
+published: ICML 2023
 thumbnail: assets/co-bed-dag.png
 tag: paper
 ---
