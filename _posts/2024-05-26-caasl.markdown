@@ -6,7 +6,7 @@ categories: papers
 external_url: https://arxiv.org/pdf/2405.16718
 external_site: arxiv.org
 authors: Yashas Annadani, Panagiotis Tigas, Stefan Bauer, Adam Foster
-published: NeurIPS 2024 (to appear)
+published: NeurIPS 2024
 thumbnail: assets/caasl.png
 tag: paper
 ---

@@ -6,7 +6,7 @@ categories: papers
 external_url: https://arxiv.org/abs/2409.01306
 external_site: arxiv.org
 authors: Lixue Cheng, P. Bernát Szabó, Zeno Schätzle, Derk Kooi, Jonas Köhler, Klaas J. H. Giesbertz, Frank Noé, Jan Hermann, Paola Gori-Giorgi, Adam Foster
-published: Preprint
+published: Journal of Chemical Physics
 thumbnail: assets/benzene_log_density.png
 tag: paper
 ---
