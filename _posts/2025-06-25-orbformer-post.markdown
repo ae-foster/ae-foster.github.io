@@ -5,6 +5,7 @@ date:   2025-06-25
 categories: posts
 authors: Adam Foster
 published: Blog post
+thumbnail: assets/envelope-one.png
 tag: post
 ---
 
@@ -59,7 +60,8 @@ Then $$\mathcal{E}$$ is an *eigenvalue* of the operator $$\hat{H}_\mathbf{M}$$. 
 It can be shown<sup>3</sup> that $$\hat{H}_\mathbf{M}$$ has real eigenvalues and that there exists a minimum eigenvalue, $$\mathcal{E}_0(\mathbf{M})$$.
 The eigenstate corresponding to the minimum eigenvalue is termed the ground state, and most chemical systems are to be found in their ground state most of the time.
 
-Given any wave function $$|\Psi\rangle$$ for the molecule $$\mathbf{M}$$, if we expand it on a basis of eigenfunctions, we can show the following variational principle
+Given any wave function $$|\Psi \rangle$$ for the 
+molecule $$\mathbf{M}$$, if we expand it on a basis of eigenfunctions, we can show the following variational principle
 
 $$
 
@@ -74,7 +76,7 @@ So far, we have followed textbook theory, and reached the branching off point fo
 
 [Wavefunction methods](https://en.wikipedia.org/wiki/Computational_chemistry#Ab_initio_method) are one huge category of approaches to solving the Schrödinger equation that explicitly represent $$|\Psi\rangle$$. These are generally considered expensive but very accurate methods, as opposed to something faster but (often) less accurate like [density functional theory](https://en.wikipedia.org/wiki/Density_functional_theory). 
 The virtue of wavefunction methods is that they are completely unsupervised (in machine learning vocab) or fully *ab initio* (in chemistry vocab).
-Their overall computational cost is their typical downside.
+Their high overall computational cost is their typical downside.
 
 Within wavefunction methods, 'single-reference' methods such as [coupled cluster](https://en.wikipedia.org/wiki/Coupled_cluster) use a starting point an approximate wavefunction that is similar to a mean-field approximation: they assume minimal correlation between the positions of different electrons. 
 If this starting approximation is good, then single-reference methods can be very, very accurate at a reasonable cost for small molecules. 
@@ -97,7 +99,7 @@ This expectation involves sampling from the unnormalised distribution defined by
 To make further progress, we need to select a specific family of trial wavefunctions which we can optimize.
 For molecules, the use of neural networks as a wavefunction *ansatz* began with PauliNet and FermiNet (Hermann et al., 2020; Pfau et al., 2020).
 These works propose a neural network that takes $$\mathbf{x}$$ as an input and uses a determinant to get the necessary antisymmetry.
-Training, although severely complicated by the presence of the Laplacian within the Hamiltonian, can proceed through the general principle of minimization. 
+Training, although severely complicated by the presence of the Laplacian within the Hamiltonian, can proceed through the general principle of stochastic gradient minimization. 
 The result was that neural networks could achieve essentially exact solutions to the Schrödinger equation for small molecules.
 
 ## Transferability
@@ -123,9 +125,8 @@ For those of us who believe in the long-term potential of neural networks to gen
 ## Orbformer
 
 We are not the first to consider making $$\mathbf{M}$$ an explicit input to a deep QMC wavefunction (Gao & Günnemann, 2023; Scherbela et al., 2024), but we sought to push this technology much further on two main fronts.
-At the foundation model end, we decided to focus on scale, and the necessary technology to facilitate that scale. 
-Previous approaches had gone up to about 700 molecules in their training dataset, we pushed this up to 22,000 with the inclusion of data augmentation.
-This scaling up required a redesign of the network architecture, particularly the dependence on $$\mathbf{M}$$, as well as a faster MCMC sampling algorithm to self-generate the electron data, a penalized training objective to avoid the newly identified 'determinant collapse' issue, FlashAttention combining with recent developments in fast Laplacians, and a few other tune-ups.
+At the foundation model end, we decided to focus on scale, particularly in the quantity and diversity of training molecules in $$p_\textrm{train}$$, and the necessary technology to facilitate that scale. 
+Scaling up required a redesign of the network architecture, particularly the dependence on $$\mathbf{M}$$, as well as a faster MCMC sampling algorithm to self-generate the electron data, a penalized training objective to avoid the newly identified 'determinant collapse' issue, FlashAttention combining with recent developments in fast Laplacians, and a few other tune-ups.
 
 We also thought carefully about appropriate validation and where a model such as our might have immediate utility.
 First, we put the strongly correlated systems at the forefront, since those are the ones where current methods fare worst.
@@ -134,7 +135,7 @@ And we placed the trade-off between cost and accuracy at the forefront of our ev
 
 Our conclusion: Orbformer, though by no means the end of the story, marks significant progress towards a model that generalizes the electronic structure of molecules.
 
-If you'd like to know more, check out the paper!
+If you'd like to know more and see the results, check out the paper!
 
 
 
