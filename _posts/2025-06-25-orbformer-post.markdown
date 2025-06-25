@@ -74,11 +74,11 @@ So far, we have followed textbook theory, and reached the branching off point fo
 
 ## The problem of strongly correlated systems
 
-[Wavefunction methods](https://en.wikipedia.org/wiki/Computational_chemistry#Ab_initio_method) are one huge category of approaches to solving the Schrödinger equation that explicitly represent $$|\Psi\rangle$$. These are generally considered expensive but very accurate methods, as opposed to something faster but (often) less accurate like [density functional theory](https://en.wikipedia.org/wiki/Density_functional_theory). 
+[Wavefunction methods](https://en.wikipedia.org/wiki/Computational_chemistry#Ab_initio_method) are one huge category of approaches to solving the Schrödinger equation that explicitly represent $$|\Psi\rangle$$. These are generally considered expensive but very accurate methods, as opposed to something faster but (often) less accurate which does not explicitly represent $$|\Psi\rangle$$, like [density functional theory](https://en.wikipedia.org/wiki/Density_functional_theory). 
 The virtue of wavefunction methods is that they are completely unsupervised (in machine learning vocab) or fully *ab initio* (in chemistry vocab).
 Their high overall computational cost is their typical downside.
 
-Within wavefunction methods, 'single-reference' methods such as [coupled cluster](https://en.wikipedia.org/wiki/Coupled_cluster) use a starting point an approximate wavefunction that is similar to a mean-field approximation: they assume minimal correlation between the positions of different electrons. 
+Within wavefunction methods, 'single-reference' methods such as [coupled cluster](https://en.wikipedia.org/wiki/Coupled_cluster) use as a starting point an approximate wavefunction that is similar to a mean-field approximation: they assume minimal correlation between the positions of different electrons. 
 If this starting approximation is good, then single-reference methods can be very, very accurate at a reasonable cost for small molecules. 
 But this approximation and the single-reference methods that use it start to break down unexpectedly and dramatically.
 The canonical example, that we use in our paper, is the bond dissociation, in which single-reference methods transition from working extremely well to extremely poorly as a chemical bond is stretched and broken.
@@ -131,7 +131,7 @@ Scaling up required a redesign of the network architecture, particularly the dep
 We also thought carefully about appropriate validation and where a model such as our might have immediate utility.
 First, we put the strongly correlated systems at the forefront, since those are the ones where current methods fare worst.
 We focused on the accuracy of predicting relative energy between two states (e.g. equilibrium to transition state), rather than the total energy, since the former is more chemically relevant.
-And we placed the trade-off between cost and accuracy at the forefront of our evaluation.
+And we placed much more emphasis on the trade-off between cost and accuracy, as opposed to simply showing that deep QMC wavefunctions are super accurate.
 
 Our conclusion: Orbformer, though by no means the end of the story, marks significant progress towards a model that generalizes the electronic structure of molecules.
 
