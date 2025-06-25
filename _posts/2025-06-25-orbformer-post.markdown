@@ -160,4 +160,4 @@ M. Scherbela, L. Gerard & P. Grohs. "Towards a transferable fermionic neural wav
 
 <sup>2</sup> If you are familiar with the time-dependent version, you can arrive at the time-independent version by substituting $$\Psi(\mathbf{x},t) = \Psi(\mathbf{x})e^{-i\mathcal{E}t}$$.
 
-<sup>3</sup> How is this shown? One starts with the essential [self-adjoint property of the Laplacian operator](https://www-users.cse.umn.edu/~garrett/m/fun/adjointness_crit.pdf), then one establishes a bound on the overall Hamiltonian which allows application of the [Kato—Rellich Theorem](https://loss.math.gatech.edu/17SPRINGTEA/7334/NOTES/section7katorellich.pdf) and also bounds the eigenvalues from below.
+<sup>3</sup> How is this shown? One starts with the [essential self-adjoint property of the Laplacian operator](https://www-users.cse.umn.edu/~garrett/m/fun/adjointness_crit.pdf), then one establishes a bound on the overall Hamiltonian which allows application of the [Kato—Rellich Theorem](https://loss.math.gatech.edu/17SPRINGTEA/7334/NOTES/section7katorellich.pdf) and also bounds the eigenvalues from below.
