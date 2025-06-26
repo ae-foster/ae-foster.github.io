@@ -9,7 +9,7 @@ thumbnail: assets/envelope-one.png
 tag: post
 ---
 
-We have just released [Orbformer](arxiv.org), a foundation model of molecular wavefunctions!
+We have just released [Orbformer](https://arxiv.org/abs/2506.19960), a foundation model of molecular wavefunctions!
 This is a project I have been working on over the last two-and-a-bit years as part of an amazing team.
 This blog post tells the story of Orbformer from a machine learning perspective, filling in some quantum chemistry details along the way. 
 <!--more-->
@@ -135,14 +135,14 @@ And we placed much more emphasis on the trade-off between cost and accuracy, as 
 
 Our conclusion: Orbformer, though by no means the end of the story, marks significant progress towards a model that generalizes the electronic structure of molecules.
 
-If you'd like to know more and see the results, check out the paper!
+If you'd like to know more and see the results, check out [the paper]((https://arxiv.org/abs/2506.19960)!
 
 
 
 
 ## References
 
-arXiv preprints our paper
+A. Foster, Z. Schätzle, P. B. Szabó, L. Cheng, J. Köhler, G. Cassella, N. Gao, J. Li, F. Noé & J. Hermann. "An ab initio foundation model of wavefunctions that accurately describes chemical bond breaking." arXiv preprint arXiv:2506.19960 (2025).
 
 J. Hermann, J. Spencer, K. Choo, A. Mezzacapo, W. M. C. Foulkes, D. Pfau, G. Carleo & F. Noé. "Ab initio quantum chemistry with neural-network wavefunctions." Nat. Rev. Chem. 7, 692 (2023).
 
