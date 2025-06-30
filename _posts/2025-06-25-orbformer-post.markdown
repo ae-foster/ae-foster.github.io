@@ -107,7 +107,7 @@ The result was that neural networks could achieve essentially exact solutions to
 To recap a specific point about PauliNet and FermiNet—the only network input was the spatial-spin co-ordinates of the electrons, $$\mathbf{x}$$. The dependence on $$\mathbf{M}$$ was implicit with a different network and a different training run for different molecular configurations.
 This approach of solving a separate optimization problem for each $$\mathbf{M}$$ has been, with very limited exceptions, the norm across all other traditional wavefunction methods as well.
 
-More recently, however, it's become clear that with neural networks wavefunction models, there is no reason why we should restrict ourselves to training fresh networks for different molecules. 
+More recently, however, it's become clear that with neural network wavefunction models, there is no reason why we should restrict ourselves to training fresh networks for different molecules. 
 Instead, we can train a single network that takes $$\mathbf{M},\mathbf{x}$$ as inputs, and train that to minimize the following objective
 
 $$
@@ -135,7 +135,7 @@ And we placed much more emphasis on the trade-off between cost and accuracy, as 
 
 Our conclusion: Orbformer, though by no means the end of the story, marks significant progress towards a model that generalizes the electronic structure of molecules.
 
-If you'd like to know more and see the results, check out [the paper]((https://arxiv.org/abs/2506.19960)!
+If you'd like to know more and see the results, check out [the paper](https://arxiv.org/abs/2506.19960)!
 
 
 
