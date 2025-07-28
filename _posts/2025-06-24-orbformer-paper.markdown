@@ -5,7 +5,7 @@ date:   2025-06-24
 categories: papers
 external_url: https://arxiv.org/abs/2506.19960
 external_site: arxiv.org
-authors: Adam Foster
+authors: Adam Foster, Zeno Schätzle, P. Bernát Szabó, Lixue Cheng, Jonas Köhler, Gino Cassella, Nicholas Gao, Jiawei Li, Frank Noé, Jan Hermann
 published: Preprint
 thumbnail: assets/orbformer.png
 tag: paper

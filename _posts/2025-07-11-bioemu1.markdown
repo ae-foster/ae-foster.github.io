@@ -5,7 +5,7 @@ date:   2025-07-11
 categories: papers
 external_url: https://www.science.org/doi/abs/10.1126/science.adv9817
 external_site: science.org
-authors: Adam Foster
+authors: Sarah Lewis, Tim Hempel, José Jiménez-Luna, Michael Gastegger, Yu Xie, Andrew YK Foong, Victor García Satorras, Osama Abdin, Bastiaan S Veeling, Iryna Zaporozhets, Yaoyi Chen, Soojung Yang, Adam E Foster, Arne Schneuing, Jigyasa Nigam, Federico Barbero, Vincent Stimper, Andrew Campbell, Jason Yim, Marten Lienen, Yu Shi, Shuxin Zheng, Hannes Schulz, Usman Munir, Roberto Sordillo, Ryota Tomioka, Cecilia Clementi, Frank Noé
 published: Science
 thumbnail: assets/adenylate_kinase.png
 tag: paper
